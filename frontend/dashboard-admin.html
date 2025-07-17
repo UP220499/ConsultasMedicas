@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrador - Consulta Médica</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f4f7fa; }
+        .card { border-radius: 1rem; }
+        .table th, .table td { vertical-align: middle; }
+        .footer-links a {
+            color: #fff;
+            text-decoration: underline;
+            margin-right: 1rem;
+        }
+        .footer-links a:hover {
+            color: #ffd700;
+        }
+    </style>
 </head>
 
 <body>
@@ -162,6 +175,12 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <p class="mb-0 text-muted">&copy; 2025 Consulta Médica Online - Panel de Administración</p>
+                </div>
+                <div class="col-md-6 text-md-end footer-links">
+                    <a href="index.html" class="text-dark">Inicio</a>
+                    <a href="admin-medicos.html" class="text-dark">Médicos</a>
+                    <a href="admin-citas.html" class="text-dark">Citas</a>
+                    <a href="javascript:void(0)" class="text-dark" onclick="logout()">Cerrar Sesión</a>
                 </div>
             </div>
         </div>

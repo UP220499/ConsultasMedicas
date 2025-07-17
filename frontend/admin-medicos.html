@@ -7,6 +7,19 @@
     <title>Administración de Médicos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { background: #f4f7fa; }
+        .card { border-radius: 1rem; }
+        .table th, .table td { vertical-align: middle; }
+        .footer-links a {
+            color: #fff;
+            text-decoration: underline;
+            margin-right: 1rem;
+        }
+        .footer-links a:hover {
+            color: #ffd700;
+        }
+    </style>
 </head>
 
 <body ng-controller="AdminMedicosController">
@@ -201,6 +214,10 @@
     <!-- FOOTER -->
     <footer class="text-center mt-5 mb-3 text-muted">
         <hr>
+        <div class="footer-links">
+            <a href="https://www.privacidad.com" target="_blank">Política de Privacidad</a>
+            <a href="https://www.terminos.com" target="_blank">Términos y Condiciones</a>
+        </div>
         <p>&copy; 2025 Consulta Médica Online - Panel de Administración</p>
     </footer>
 
