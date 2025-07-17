@@ -8,8 +8,47 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f4f7fa; }
-        .card { border-radius: 1rem; }
+        .navbar {
+            box-shadow: 0 2px 8px rgba(76,110,245,0.08);
+            background: linear-gradient(90deg, #1a237e 0%, #00bcd4 100%);
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .btn {
+            color: #fff !important;
+        }
+        .navbar .nav-link.active, .navbar .nav-link:hover {
+            color: #00bcd4 !important;
+            font-weight: bold;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 2px 16px rgba(76,110,245,0.08);
+            border: none;
+        }
+        .card-header {
+            border-radius: 1rem 1rem 0 0;
+            background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+            color: #fff;
+        }
         .table th, .table td { vertical-align: middle; }
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: #f4f7fa;
+        }
+        .btn, .form-select, .form-control {
+            border-radius: 0.6rem;
+        }
+        .btn-info, .btn-success, .btn-primary, .btn-outline-info, .btn-outline-success {
+            box-shadow: 0 2px 8px rgba(76,110,245,0.07);
+        }
+        .btn-success, .btn-outline-success {
+            background-color: #00bcd4;
+            border-color: #00bcd4;
+            color: #fff;
+        }
+        .btn-success:hover, .btn-outline-success:hover {
+            background-color: #1976d2;
+            border-color: #1976d2;
+            color: #fff;
+        }
         .footer-links a {
             color: #fff;
             text-decoration: underline;
@@ -18,24 +57,37 @@
         .footer-links a:hover {
             color: #ffd700;
         }
+        .alert {
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(76,110,245,0.07);
+        }
+        .badge {
+            font-size: 1em;
+            padding: 0.5em 1em;
+            border-radius: 0.7em;
+        }
+        .table-responsive {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
     </style>
 </head>
 
 <body>
     <!-- NAVBAR ADMIN -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="index.html">
                 <strong>Admin - Consulta Médica</strong>
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link text-dark me-3" href="index.html">
+                <a class="nav-link" href="index.html">
                     Inicio
                 </a>
-                <span class="navbar-text me-3 text-dark" id="admin-info">
+                <span class="navbar-text me-3" id="admin-info" style="color:#fff;">
                     Bienvenido, Admin
                 </span>
-                <button class="btn btn-outline-dark btn-sm" onclick="logout()">
+                <button class="btn btn-outline-success btn-sm" onclick="logout()">
                     Cerrar Sesión
                 </button>
             </div>
@@ -177,10 +229,10 @@
                     <p class="mb-0 text-muted">&copy; 2025 Consulta Médica Online - Panel de Administración</p>
                 </div>
                 <div class="col-md-6 text-md-end footer-links">
-                    <a href="index.html" class="text-dark">Inicio</a>
-                    <a href="admin-medicos.html" class="text-dark">Médicos</a>
-                    <a href="admin-citas.html" class="text-dark">Citas</a>
-                    <a href="javascript:void(0)" class="text-dark" onclick="logout()">Cerrar Sesión</a>
+                    <a href="index.html">Inicio</a>
+                    <a href="admin-medicos.html">Médicos</a>
+                    <a href="admin-citas.html">Citas</a>
+                    <a href="javascript:void(0)" onclick="logout()">Cerrar Sesión</a>
                 </div>
             </div>
         </div>

@@ -6,42 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Consulta Médica</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .auth-container {
+        body.auth-container {
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .auth-card {
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(76, 110, 245, 0.15);
+            overflow: hidden;
+        }
+
+        .auth-card .card-header {
+            border-radius: 18px 18px 0 0;
+        }
+
+        .input-group-text {
+            background: #f4f7fa;
+            border: none;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 2px #764ba2;
+        }
+
+        .btn-lg {
+            font-size: 1.1rem;
+            padding: 0.75em 1.5em;
+        }
+
+        .error-msg {
+            color: #d32f2f;
+            font-size: 0.95em;
+            margin-bottom: 0.5em;
+            display: none;
+        }
+
+        .auth-tabs .nav-link {
+            font-weight: 500;
+            font-size: 1.1em;
         }
     </style>
 </head>
 
-<body class="auth-container d-flex align-items-center">
+<body class="auth-container">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card auth-card">
                     <div class="card-header bg-primary text-white text-center">
-                        <h3>Sistema de Consulta Médica</h3>
+                        <h3><i class="bi bi-heart-pulse-fill me-2"></i>Sistema de Consulta Médica</h3>
                         <p class="mb-0">Gestión integral de citas médicas</p>
                     </div>
                     <div class="card-body p-4">
                         <!-- TABS DE NAVEGACIÓN -->
-                        <ul class="nav nav-pills nav-justified mb-4" id="authTabs" role="tablist">
+                        <ul class="nav nav-pills nav-justified mb-4 auth-tabs" id="authTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="login-tab" data-bs-toggle="pill" 
                                         data-bs-target="#login-panel" type="button" role="tab">
-                                    Iniciar Sesión
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="register-tab" data-bs-toggle="pill" 
                                         data-bs-target="#register-panel" type="button" role="tab">
-                                    Registrarse
+                                    <i class="bi bi-person-plus me-1"></i>Registrarse
                                 </button>
                             </li>
                         </ul>
@@ -49,25 +85,31 @@
                         <div class="tab-content" id="authTabsContent">
                             <!-- PANEL DE LOGIN -->
                             <div class="tab-pane fade show active" id="login-panel" role="tabpanel">
-                                <form id="login-form">
+                                <form id="login-form" autocomplete="on">
+                                    <div id="login-error" class="error-msg"></div>
                                     <div class="mb-3">
                                         <label class="form-label">Email *</label>
-                                        <input type="email" class="form-control" id="login-email" 
-                                               placeholder="usuario@example.com" required>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" id="login-email" 
+                                                placeholder="usuario@example.com" required autocomplete="username">
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Contraseña *</label>
-                                        <input type="password" class="form-control" id="login-password" 
-                                               placeholder="Ingresa tu contraseña" required>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                            <input type="password" class="form-control" id="login-password" 
+                                                placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+                                        </div>
                                     </div>
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary" id="login-btn">
+                                        <button type="submit" class="btn btn-primary btn-lg" id="login-btn">
                                             <span id="login-spinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
                                             Iniciar Sesión
                                         </button>
                                     </div>
                                 </form>
-
                                 <!-- USUARIOS DE PRUEBA -->
                                 <div class="mt-4">
                                     <small class="text-muted">Usuarios de prueba:</small>
@@ -100,27 +142,40 @@
 
                             <!-- PANEL DE REGISTRO -->
                             <div class="tab-pane fade" id="register-panel" role="tabpanel">
-                                <form id="register-form">
+                                <form id="register-form" autocomplete="on">
+                                    <div id="register-error" class="error-msg"></div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Nombre Completo *</label>
-                                            <input type="text" class="form-control" id="register-nombre" 
-                                                   placeholder="Juan Pérez" required>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                                <input type="text" class="form-control" id="register-nombre" 
+                                                    placeholder="Juan Pérez" required autocomplete="name">
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Email *</label>
-                                            <input type="email" class="form-control" id="register-email" 
-                                                   placeholder="usuario@example.com" required>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                                <input type="email" class="form-control" id="register-email" 
+                                                    placeholder="usuario@example.com" required autocomplete="email">
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Contraseña *</label>
-                                            <input type="password" class="form-control" id="register-password" 
-                                                   placeholder="Mínimo 6 caracteres" required minlength="6">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                                <input type="password" class="form-control" id="register-password" 
+                                                    placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Teléfono</label>
-                                            <input type="tel" class="form-control" id="register-telefono" 
-                                                   placeholder="+52 55 1234 5678">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                                <input type="tel" class="form-control" id="register-telefono" 
+                                                    placeholder="+52 55 1234 5678" autocomplete="tel">
+                                            </div>
                                         </div>
                                         <div class="col-12 mb-3">
                                             <label class="form-label">Tipo de Usuario *</label>
@@ -131,7 +186,7 @@
                                         </div>
                                     </div>
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-success" id="register-btn">
+                                        <button type="submit" class="btn btn-success btn-lg" id="register-btn">
                                             <span id="register-spinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
                                             Registrarse
                                         </button>
@@ -159,6 +214,12 @@
     <script>
         const API_BASE = 'http://localhost:8080/api';
 
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.style.display = msg ? 'block' : 'none';
+        }
+
         // Llenar credenciales de admin
         function fillAdminCredentials() {
             document.getElementById('login-email').value = 'admin@mediconsultas.com';
@@ -174,34 +235,25 @@
         // Manejar login
         document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+            showError('login-error', '');
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             const loginBtn = document.getElementById('login-btn');
             const spinner = document.getElementById('login-spinner');
-            
             if (!email || !password) {
-                alert('Por favor completa todos los campos');
+                showError('login-error', 'Por favor completa todos los campos');
                 return;
             }
-            
-            // Mostrar loading
             loginBtn.disabled = true;
             spinner.style.display = 'inline-block';
-            
             try {
                 const response = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
-                    // Guardar sesión
                     const userSession = {
                         tipo: data.usuario.tipo.toLowerCase(),
                         email: data.usuario.email,
@@ -210,33 +262,29 @@
                         id: data.usuario.id,
                         loginTime: new Date().toISOString()
                     };
-                    
                     localStorage.setItem('userSession', JSON.stringify(userSession));
                     alert(`¡Bienvenido ${data.usuario.nombre}!`);
-                    
-                    // Redirigir según tipo de usuario
                     if (data.usuario.tipo === 'ADMIN') {
                         window.location.href = 'dashboard-admin.html';
                     } else {
                         window.location.href = 'dashboard-paciente.html';
                     }
                 } else {
-                    alert(data.message || 'Error al iniciar sesión');
+                    showError('login-error', data.message || 'Error al iniciar sesión');
                 }
-                
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error de conexión. Verifica que el backend esté funcionando.');
+                showError('login-error', 'Error de conexión. Verifica que el backend esté funcionando.');
             } finally {
                 loginBtn.disabled = false;
                 spinner.style.display = 'none';
             }
         });
-        
+
         // Manejar registro
         document.getElementById('register-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+            showError('register-error', '');
             const nombre = document.getElementById('register-nombre').value;
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
@@ -244,62 +292,45 @@
             const tipo = document.getElementById('register-tipo').value;
             const registerBtn = document.getElementById('register-btn');
             const spinner = document.getElementById('register-spinner');
-            
             if (!nombre || !email || !password) {
-                alert('Por favor completa todos los campos obligatorios');
+                showError('register-error', 'Por favor completa todos los campos obligatorios');
                 return;
             }
-            
             if (password.length < 6) {
-                alert('La contraseña debe tener al menos 6 caracteres');
+                showError('register-error', 'La contraseña debe tener al menos 6 caracteres');
                 return;
             }
-            
-            // Mostrar loading
             registerBtn.disabled = true;
             spinner.style.display = 'inline-block';
-            
             try {
                 const response = await fetch(`${API_BASE}/auth/register`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nombre, email, password, telefono, tipo })
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     alert('¡Registro exitoso! Ya puedes iniciar sesión.');
-                    
-                    // Cambiar a tab de login
                     document.getElementById('login-tab').click();
-                    
-                    // Llenar datos en login
                     document.getElementById('login-email').value = email;
                     document.getElementById('login-password').value = password;
-                    
                 } else {
-                    alert(data.message || 'Error al registrarse');
+                    showError('register-error', data.message || 'Error al registrarse');
                 }
-                
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error de conexión. Verifica que el backend esté funcionando.');
+                showError('register-error', 'Error de conexión. Verifica que el backend esté funcionando.');
             } finally {
                 registerBtn.disabled = false;
                 spinner.style.display = 'none';
             }
         });
-        
+
         // Verificar si ya hay una sesión activa y manejar hash de URL
         window.onload = function() {
-            // Verificar si se debe mostrar el tab de registro
             if (window.location.hash === '#register') {
                 document.getElementById('register-tab').click();
             }
-            
             const session = localStorage.getItem('userSession');
             if (session) {
                 const userData = JSON.parse(session);
@@ -314,7 +345,7 @@
                 }
             }
         };
-        
+
         // Manejar cambios de hash para navegación
         window.addEventListener('hashchange', function() {
             if (window.location.hash === '#register') {
