@@ -217,6 +217,14 @@
                                 <span ng-hide="cargando">Solicitar Cita</span>
                                 <span ng-show="cargando">Enviando...</span>
                             </button>
+                            <div ng-if="!cargando && citaForm.$invalid" class="mt-2">
+                                <div class="alert alert-danger p-2 mb-0" style="font-size:0.95em">
+                                    <div ng-if="citaForm.medico.$invalid">Debes seleccionar un médico.</div>
+                                    <div ng-if="citaForm.fechaHora.$invalid">Debes seleccionar una fecha y hora válida (mínimo 1 hora desde ahora).</div>
+                                    <div ng-if="citaForm.motivo.$invalid">El motivo debe tener al menos 10 caracteres.</div>
+                                    <div ng-if="citaForm.telefono.$invalid">El teléfono debe tener entre 10 y 15 dígitos (opcional).</div>
+                                </div>
+                            </div>
                             <button type="button" class="btn btn-secondary me-2" ng-click="cancelarFormulario()">
                                 Cancelar
                             </button>
@@ -509,41 +517,47 @@
                         alert('Debes seleccionar un médico');
                         return;
                     }
-                    
                     if (!$scope.nuevaCita.fechaHora) {
                         alert('Debes seleccionar una fecha y hora');
                         return;
                     }
-                    
-                    // Validar que la fecha sea futura
+                    // Validar que la fecha sea futura y no el mismo día
                     const fechaSeleccionada = new Date($scope.nuevaCita.fechaHora);
-                    const fechaMinima = new Date();
-                    fechaMinima.setHours(fechaMinima.getHours() + 1);
-                    
-                    if (fechaSeleccionada <= fechaMinima) {
-                        alert('La fecha debe ser al menos 1 hora desde ahora');
+                    const ahora = new Date();
+                    ahora.setHours(ahora.getHours() + 1);
+                    // No permitir agendar para el mismo día
+                    const esMismoDia = fechaSeleccionada.getFullYear() === ahora.getFullYear() &&
+                        fechaSeleccionada.getMonth() === ahora.getMonth() &&
+                        fechaSeleccionada.getDate() === ahora.getDate();
+                    if (esMismoDia || fechaSeleccionada <= ahora) {
+                        alert('No puedes agendar una cita para el mismo día ni en menos de 1 hora. Elige un día futuro.');
                         return;
                     }
-                    
                     // Validar día de la semana (no domingos)
                     if (fechaSeleccionada.getDay() === 0) {
                         if (!confirm('Has seleccionado un domingo. ¿Estás seguro de que quieres continuar?')) {
                             return;
                         }
                     }
-                    
                     // Validar horario (8 AM - 8 PM)
                     const hora = fechaSeleccionada.getHours();
                     if (hora < 8 || hora > 20) {
                         alert('Por favor selecciona un horario entre 8:00 AM y 8:00 PM');
                         return;
                     }
-                    
+                    // Validar motivo
                     if (!$scope.nuevaCita.motivo || $scope.nuevaCita.motivo.trim().length < 10) {
                         alert('El motivo debe tener al menos 10 caracteres');
                         return;
                     }
-                    
+                    // Validar que no exista una cita en la misma fecha y hora
+                    const yaExisteCita = $scope.misCitas.some(function(cita) {
+                        return cita.fechaHora === $scope.nuevaCita.fechaHora && cita.estado === 'PROGRAMADA';
+                    });
+                    if (yaExisteCita) {
+                        alert('Ya tienes una cita programada para esa fecha y hora. Elige otra.');
+                        return;
+                    }
                     $scope.cargando = true;
                     
                     const citaData = {

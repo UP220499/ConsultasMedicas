@@ -71,6 +71,21 @@ public class CitaController {
             Optional<Medico> medico = medicoRepository.findById(cita.getMedico().getId());
             if (medico.isPresent()) {
                 cita.setMedico(medico.get());
+
+                // Validar que no exista cita para el mismo paciente (email) y fecha/hora
+                boolean existeCitaPaciente = citaRepository.findByEmailIgnoreCase(cita.getEmail())
+                    .stream()
+                    .anyMatch(c -> c.getFechaHora().equals(cita.getFechaHora()) && c.getEstado() == Cita.EstadoCita.PROGRAMADA);
+
+                // Validar que no exista cita para el mismo médico y fecha/hora
+                boolean existeCitaMedico = citaRepository.findByMedico(medico.get())
+                    .stream()
+                    .anyMatch(c -> c.getFechaHora().equals(cita.getFechaHora()) && c.getEstado() == Cita.EstadoCita.PROGRAMADA);
+
+                if (existeCitaPaciente || existeCitaMedico) {
+                    return ResponseEntity.status(409).body(null); // 409 Conflict
+                }
+
                 Cita savedCita = citaRepository.save(cita);
                 return ResponseEntity.ok(savedCita);
             }
