@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es" ng-app="pacienteDashboardApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mi Panel - Consulta Médica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+
+<body ng-controller="PacienteDashboardController">
+    <!-- NAVBAR PACIENTE -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <strong>👤 Mi Panel - Consulta Médica</strong>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-white me-3" href="index.html">
+                     Inicio
+                </a>
+                <span class="navbar-text me-3">
+                    Bienvenido, {{ pacienteInfo.nombre }}
+                </span>
+                <button class="btn btn-outline-light btn-sm" ng-click="logout()">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        
+        <!-- BIENVENIDA -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="alert alert-success">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4 class="alert-heading">¡Bienvenido {{ pacienteInfo.nombre }}! 👋</h4>
+                            <p>Desde aquí puedes solicitar nuevas citas médicas y consultar tu historial.</p>
+                            <p class="mb-0">
+                                <strong>Email:</strong> {{ pacienteInfo.email }} | 
+                                <strong>Teléfono:</strong> {{ pacienteInfo.telefono || 'No registrado' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALERTA DE CITA PENDIENTE -->
+        <div ng-show="datosCitaPrevia" class="alert alert-info mb-3">
+            <h5>🏥 Completar Solicitud de Cita</h5>
+            <p>Has seleccionado al <strong>{{ datosCitaPrevia.medico.nombre }}</strong> ({{ datosCitaPrevia.medico.especialidad }}).</p>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm" ng-click="usarDatosPrevios()">✅ Continuar con este médico</button>
+                <button class="btn btn-outline-secondary btn-sm" ng-click="descartarDatosPrevios()">❌ Seleccionar otro</button>
+            </div>
+        </div>
+
+        <!-- ESTADÍSTICAS DEL PACIENTE -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">📅 Mis Citas</h5>
+                        <h2>{{ misCitas.length }}</h2>
+                        <p class="card-text">Total de citas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">⏱️ Próximas</h5>
+                        <h2>{{ citasProgramadas.length }}</h2>
+                        <p class="card-text">Citas programadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-secondary mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">✅ Completadas</h5>
+                        <h2>{{ citasCompletadas.length }}</h2>
+                        <p class="card-text">Consultas realizadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCIONES RÁPIDAS -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">🏥 Solicitar Nueva Cita</h5>
+                        <p class="card-text">Agenda una nueva consulta médica</p>
+                        <button class="btn btn-success" ng-click="mostrarFormularioCita = !mostrarFormularioCita">
+                            {{ mostrarFormularioCita ? 'Ocultar Formulario' : 'Solicitar Cita' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">👨‍⚕️ Ver Médicos</h5>
+                        <p class="card-text">Consulta nuestros médicos disponibles</p>
+                        <a href="medicos.html" class="btn btn-primary">Ver Médicos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">🏠 Página Principal</h5>
+                        <p class="card-text">Volver al inicio del sistema</p>
+                        <a href="index.html" class="btn btn-info">Ir al Inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULARIO PARA SOLICITAR CITA -->
+        <div ng-show="mostrarFormularioCita" class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h4>Solicitar Nueva Cita Médica</h4>
+                <div ng-show="medicoPreseleccionado" class="mt-2">
+                    <small class="d-flex align-items-center">
+                        <span class="badge bg-light text-dark me-2">✅ Médico seleccionado desde la lista</span>
+                        <strong>{{ nuevaCita.medico.nombre }}</strong> - {{ nuevaCita.medico.especialidad }}
+                    </small>
+                </div>
+            </div>
+            <div class="card-body">
+                <form ng-submit="solicitarCita()" novalidate name="citaForm">
+                    <div class="row">
+                        <!-- INFORMACIÓN DEL PACIENTE (Solo informativa) -->
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-info">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>👤 Paciente:</strong> {{ pacienteInfo.nombre }}
+                                        <span class="mx-2">|</span>
+                                        <strong>📧 Email:</strong> {{ pacienteInfo.email }}
+                                    </div>
+                                    <small class="text-muted">Información automática</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TELÉFONO EDITABLE -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">📞 Teléfono de Contacto</label>
+                            <input type="tel" class="form-control" ng-model="nuevaCita.telefono" 
+                                   placeholder="+52 55 1234 5678" ng-pattern="/^[\+]?[0-9\s\-\(\)]{10,15}$/">
+                            <small class="text-muted">
+                                {{ pacienteInfo.telefono ? 'Actualiza tu teléfono si es necesario' : 'Agrega tu teléfono de contacto' }}
+                            </small>
+                        </div>
+
+                        <!-- MÉDICO -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">👨‍⚕️ Médico *</label>
+                            <select class="form-select" ng-model="nuevaCita.medico" 
+                                    ng-options="medico as (medico.nombre + ' - ' + medico.especialidad) for medico in medicos track by medico.id" 
+                                    required name="medico" ng-class="{'border-success': nuevaCita.medico && medicoPreseleccionado}">
+                                <option value="">Selecciona un médico</option>
+                            </select>
+                            <small ng-show="nuevaCita.medico && nuevaCita.medico.horario" class="text-muted">
+                                <strong>📅 Horario:</strong> {{ nuevaCita.medico.horario }}
+                            </small>
+                            <div ng-show="!nuevaCita.medico" class="mt-2">
+                                <a href="medicos.html" class="btn btn-outline-primary btn-sm">
+                                    👨‍⚕️ Ver lista completa de médicos
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- FECHA Y HORA -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">📅 Fecha y Hora Preferida *</label>
+                            <input type="datetime-local" class="form-control" ng-model="nuevaCita.fechaHora" 
+                                   required name="fechaHora" ng-min="fechaMinima">
+                            <small class="text-muted">Selecciona una fecha futura (mínimo 1 hora desde ahora)</small>
+                        </div>
+
+                        <!-- MOTIVO -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">📝 Motivo de la Consulta *</label>
+                            <textarea class="form-control" ng-model="nuevaCita.motivo" rows="3" 
+                                      placeholder="Describe brevemente el motivo de tu consulta" 
+                                      required name="motivo" maxlength="500"></textarea>
+                            <small class="text-muted">{{ (nuevaCita.motivo || '').length }}/500 caracteres</small>
+                        </div>
+
+                        <!-- INFORMACIÓN IMPORTANTE -->
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-warning">
+                                <strong>📋 Información importante:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Tu solicitud será revisada por el personal médico</li>
+                                    <li>Te contactaremos para confirmar la disponibilidad</li>
+                                    <li>Recibirás un email de confirmación</li>
+                                    <li>Puedes cancelar tu cita hasta 2 horas antes</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- BOTONES -->
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success me-2" ng-disabled="cargando || citaForm.$invalid">
+                                <span ng-show="cargando" class="spinner-border spinner-border-sm me-2"></span>
+                                <span ng-hide="cargando">🏥 Solicitar Cita</span>
+                                <span ng-show="cargando">Enviando...</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary me-2" ng-click="cancelarFormulario()">
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn btn-outline-info" ng-click="volverASeleccionarMedico()">
+                                👨‍⚕️ Cambiar Médico
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MIS CITAS -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>📅 Mi Historial de Citas</h5>
+            </div>
+            <div class="card-body">
+                <div ng-show="cargandoCitas" class="text-center">
+                    <div class="spinner-border"></div>
+                    <p>Cargando tus citas...</p>
+                </div>
+                
+                <div ng-show="misCitas.length === 0 && !cargandoCitas" class="alert alert-info">
+                    No tienes citas registradas. ¡Solicita tu primera consulta!
+                </div>
+                
+                <div class="table-responsive" ng-show="misCitas.length > 0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Médico</th>
+                                <th>Especialidad</th>
+                                <th>Motivo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="cita in misCitas | orderBy:'-fechaHora'">
+                                <td>{{ formatearFecha(cita.fechaHora) }}</td>
+                                <td>{{ cita.medico.nombre }}</td>
+                                <td><span class="badge bg-primary">{{ cita.medico.especialidad }}</span></td>
+                                <td>
+                                    <span title="{{ cita.motivo }}">
+                                        {{ cita.motivo.length > 50 ? (cita.motivo | limitTo:50) + '...' : cita.motivo }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" ng-class="{
+                                        'bg-success': cita.estado === 'PROGRAMADA',
+                                        'bg-info': cita.estado === 'COMPLETADA', 
+                                        'bg-danger': cita.estado === 'CANCELADA'
+                                    }">{{ cita.estado }}</span>
+                                </td>
+                                <td>
+                                    <button ng-show="cita.estado === 'PROGRAMADA'" 
+                                            class="btn btn-outline-danger btn-sm" 
+                                            ng-click="cancelarCita(cita)">
+                                        Cancelar
+                                    </button>
+                                    <span ng-show="cita.estado !== 'PROGRAMADA'" class="text-muted">
+                                        No disponible
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER CON NAVEGACIÓN -->
+    <footer class="mt-5 py-4 bg-light border-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted">&copy; 2025 Consulta Médica Online</p>
+                </div>
+                <div class="col-md-6 text-end">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        angular.module('pacienteDashboardApp', [])
+            .controller('PacienteDashboardController', function ($scope, $http) {
+                $scope.pacienteInfo = {};
+                $scope.misCitas = [];
+                $scope.citasProgramadas = [];
+                $scope.citasCompletadas = [];
+                $scope.medicos = [];
+                $scope.nuevaCita = {};
+                $scope.mostrarFormularioCita = false;
+                $scope.cargando = false;
+                $scope.cargandoCitas = false;
+                $scope.datosCitaPrevia = null;
+                $scope.fechaMinima = '';
+                $scope.medicoPreseleccionado = false;
+                
+                const API_BASE = 'http://localhost:8080/api';
+                
+                // Configurar fecha mínima (1 hora desde ahora)
+                const ahora = new Date();
+                ahora.setHours(ahora.getHours() + 1);
+                $scope.fechaMinima = ahora.toISOString().slice(0, 16);
+                
+                // Verificar sesión de paciente
+                $scope.verificarSesionPaciente = function() {
+                    const session = localStorage.getItem('userSession');
+                    if (!session) {
+                        alert('Debes iniciar sesión como paciente');
+                        window.location.href = 'login.html';
+                        return false;
+                    }
+                    
+                    const userData = JSON.parse(session);
+                    if (userData.tipo !== 'paciente') {
+                        alert('Acceso denegado. Solo para pacientes.');
+                        window.location.href = 'login.html';
+                        return false;
+                    }
+                    
+                    $scope.pacienteInfo = userData;
+                    return true;
+                };
+                
+                // Resetear formulario con datos del usuario
+                $scope.resetearFormulario = function() {
+                    $scope.nuevaCita = {
+                        paciente: $scope.pacienteInfo.nombre,
+                        email: $scope.pacienteInfo.email,
+                        telefono: $scope.pacienteInfo.telefono || '',
+                        medico: null,
+                        fechaHora: '',
+                        motivo: ''
+                    };
+                    $scope.medicoPreseleccionado = false;
+                };
+                
+                // Verificar datos de cita previa (viene de seleccionar médico)
+                $scope.verificarDatosCitaPrevia = function() {
+                    const datosPrevios = localStorage.getItem('datosCitaPrevia');
+                    if (datosPrevios) {
+                        try {
+                            $scope.datosCitaPrevia = JSON.parse(datosPrevios);
+                            console.log('✅ Datos de cita previa encontrados:', $scope.datosCitaPrevia);
+                            
+                            // Si tiene flag autoAbrir, mostrar formulario automáticamente
+                            if ($scope.datosCitaPrevia.autoAbrir) {
+                                $scope.mostrarFormularioCita = true;
+                                $scope.datosCitaPrevia.autoAbrir = false; // Evitar auto-abrir repetido
+                            }
+                        } catch (error) {
+                            console.error('❌ Error al procesar datos previos:', error);
+                            localStorage.removeItem('datosCitaPrevia');
+                        }
+                    }
+                };
+                
+                // Pre-seleccionar médico cuando se cargan los datos
+                $scope.preSeleccionarMedico = function() {
+                    if ($scope.datosCitaPrevia && $scope.medicos && $scope.medicos.length > 0) {
+                        console.log('🔍 Buscando médico ID:', $scope.datosCitaPrevia.medico.id);
+                        
+                        const medicoEncontrado = $scope.medicos.find(m => m.id == $scope.datosCitaPrevia.medico.id);
+                        if (medicoEncontrado) {
+                            $scope.nuevaCita.medico = medicoEncontrado;
+                            $scope.medicoPreseleccionado = true;
+                            console.log('✅ Médico pre-seleccionado correctamente:', medicoEncontrado.nombre);
+                            
+                            // Limpiar datos previos ya que fueron aplicados
+                            localStorage.removeItem('datosCitaPrevia');
+                            $scope.datosCitaPrevia = null;
+                            
+                            // Forzar actualización de la vista
+                            if (!$scope.$$phase) {
+                                $scope.$apply();
+                            }
+                        } else {
+                            console.error('❌ Médico no encontrado en la lista cargada. ID buscado:', $scope.datosCitaPrevia.medico.id);
+                        }
+                    }
+                };
+                
+                // Usar datos previos para el formulario
+                $scope.usarDatosPrevios = function() {
+                    if ($scope.datosCitaPrevia) {
+                        $scope.mostrarFormularioCita = true;
+                        
+                        // Rellenar teléfono si está disponible
+                        if ($scope.datosCitaPrevia.paciente.telefono) {
+                            $scope.nuevaCita.telefono = $scope.datosCitaPrevia.paciente.telefono;
+                        }
+                        
+                        // Esperar a que los médicos estén cargados y pre-seleccionar
+                        if ($scope.medicos && $scope.medicos.length > 0) {
+                            setTimeout(() => {
+                                $scope.preSeleccionarMedico();
+                            }, 100);
+                        } else {
+                            // Si los médicos aún no están cargados, esperar
+                            const checkMedicos = setInterval(() => {
+                                if ($scope.medicos && $scope.medicos.length > 0) {
+                                    $scope.preSeleccionarMedico();
+                                    clearInterval(checkMedicos);
+                                }
+                            }, 100);
+                            
+                            // Timeout de seguridad
+                            setTimeout(() => clearInterval(checkMedicos), 5000);
+                        }
+                        
+                        $scope.descartarDatosPrevios();
+                    }
+                };
+                
+                // Descartar datos previos
+                $scope.descartarDatosPrevios = function() {
+                    $scope.datosCitaPrevia = null;
+                    localStorage.removeItem('datosCitaPrevia');
+                };
+                
+                // Función para volver a seleccionar médico
+                $scope.volverASeleccionarMedico = function() {
+                    if (confirm('¿Quieres volver a la página de médicos para seleccionar otro?')) {
+                        localStorage.removeItem('datosCitaPrevia');
+                        window.location.href = 'medicos.html';
+                    }
+                };
+                
+                // Cargar médicos
+                $scope.cargarMedicos = function() {
+                    console.log('🔄 Cargando médicos...');
+                    $http.get(API_BASE + '/medicos')
+                        .then(function(response) {
+                            $scope.medicos = response.data;
+                            console.log('✅ Médicos cargados:', $scope.medicos.length, 'médicos');
+                            
+                            // Después de cargar médicos, intentar pre-seleccionar si hay datos previos
+                            if ($scope.datosCitaPrevia) {
+                                setTimeout(() => {
+                                    $scope.preSeleccionarMedico();
+                                }, 200);
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('❌ Error al cargar médicos:', error);
+                            // Fallback a datos locales si el backend falla
+                            $.getJSON("js/medicos.json", function (data) {
+                                $scope.medicos = data;
+                                console.log('✅ Médicos cargados desde JSON local:', $scope.medicos.length);
+                                if ($scope.datosCitaPrevia) {
+                                    setTimeout(() => {
+                                        $scope.preSeleccionarMedico();
+                                    }, 200);
+                                }
+                                $scope.$apply();
+                            });
+                        });
+                };
+                
+                // Cargar mis citas
+                $scope.cargarMisCitas = function() {
+                    $scope.cargandoCitas = true;
+                    $http.get(API_BASE + '/citas/paciente/' + encodeURIComponent($scope.pacienteInfo.email))
+                        .then(function(response) {
+                            $scope.misCitas = response.data;
+                            $scope.citasProgramadas = $scope.misCitas.filter(c => c.estado === 'PROGRAMADA');
+                            $scope.citasCompletadas = $scope.misCitas.filter(c => c.estado === 'COMPLETADA');
+                        })
+                        .catch(function(error) {
+                            console.error('Error al cargar citas:', error);
+                            $scope.misCitas = [];
+                        })
+                        .finally(function() {
+                            $scope.cargandoCitas = false;
+                        });
+                };
+                
+                // Solicitar nueva cita
+                $scope.solicitarCita = function() {
+                    // Validaciones adicionales
+                    if (!$scope.nuevaCita.medico) {
+                        alert('Debes seleccionar un médico');
+                        return;
+                    }
+                    
+                    if (!$scope.nuevaCita.fechaHora) {
+                        alert('Debes seleccionar una fecha y hora');
+                        return;
+                    }
+                    
+                    // Validar que la fecha sea futura
+                    const fechaSeleccionada = new Date($scope.nuevaCita.fechaHora);
+                    const fechaMinima = new Date();
+                    fechaMinima.setHours(fechaMinima.getHours() + 1);
+                    
+                    if (fechaSeleccionada <= fechaMinima) {
+                        alert('La fecha debe ser al menos 1 hora desde ahora');
+                        return;
+                    }
+                    
+                    // Validar día de la semana (no domingos)
+                    if (fechaSeleccionada.getDay() === 0) {
+                        if (!confirm('Has seleccionado un domingo. ¿Estás seguro de que quieres continuar?')) {
+                            return;
+                        }
+                    }
+                    
+                    // Validar horario (8 AM - 8 PM)
+                    const hora = fechaSeleccionada.getHours();
+                    if (hora < 8 || hora > 20) {
+                        alert('Por favor selecciona un horario entre 8:00 AM y 8:00 PM');
+                        return;
+                    }
+                    
+                    if (!$scope.nuevaCita.motivo || $scope.nuevaCita.motivo.trim().length < 10) {
+                        alert('El motivo debe tener al menos 10 caracteres');
+                        return;
+                    }
+                    
+                    $scope.cargando = true;
+                    
+                    const citaData = {
+                        paciente: $scope.nuevaCita.paciente.trim(),
+                        email: $scope.nuevaCita.email.trim(),
+                        telefono: $scope.nuevaCita.telefono ? $scope.nuevaCita.telefono.trim() : null,
+                        medico: { id: $scope.nuevaCita.medico.id },
+                        fechaHora: $scope.nuevaCita.fechaHora,
+                        motivo: $scope.nuevaCita.motivo.trim(),
+                        estado: 'PROGRAMADA'
+                    };
+                    
+                    $http.post(API_BASE + '/citas', citaData)
+                        .then(function(response) {
+                            alert('¡Cita solicitada correctamente!\n\n' +
+                                  'Detalles:\n' +
+                                  '• Médico: ' + $scope.nuevaCita.medico.nombre + '\n' +
+                                  '• Fecha: ' + $scope.formatearFecha($scope.nuevaCita.fechaHora) + '\n' +
+                                  '• Te contactaremos pronto para confirmar');
+                            
+                            $scope.cancelarFormulario();
+                            $scope.cargarMisCitas();
+                            
+                            // Actualizar información del usuario si cambió el teléfono
+                            if ($scope.nuevaCita.telefono && $scope.nuevaCita.telefono !== $scope.pacienteInfo.telefono) {
+                                $scope.pacienteInfo.telefono = $scope.nuevaCita.telefono;
+                                const updatedSession = JSON.parse(localStorage.getItem('userSession'));
+                                updatedSession.telefono = $scope.nuevaCita.telefono;
+                                localStorage.setItem('userSession', JSON.stringify(updatedSession));
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error al solicitar cita:', error);
+                            let errorMsg = 'Error al solicitar la cita.';
+                            if (error.status === 400) {
+                                errorMsg += ' Verifica que todos los datos sean correctos.';
+                            } else if (error.status === 404) {
+                                errorMsg += ' El médico seleccionado no está disponible.';
+                            } else {
+                                errorMsg += ' Intenta nuevamente más tarde.';
+                            }
+                            alert(errorMsg);
+                        })
+                        .finally(function() {
+                            $scope.cargando = false;
+                        });
+                };
+                
+                // Cancelar cita
+                $scope.cancelarCita = function(cita) {
+                    if (!confirm('¿Estás seguro de cancelar esta cita?')) {
+                        return;
+                    }
+                    
+                    $http.put(API_BASE + '/citas/' + cita.id + '/estado?estado=CANCELADA')
+                        .then(function(response) {
+                            alert('Cita cancelada correctamente');
+                            $scope.cargarMisCitas();
+                        })
+                        .catch(function(error) {
+                            console.error('Error al cancelar cita:', error);
+                            alert('Error al cancelar la cita');
+                        });
+                };
+                
+                // Cancelar formulario
+                $scope.cancelarFormulario = function() {
+                    $scope.mostrarFormularioCita = false;
+                    $scope.resetearFormulario();
+                    localStorage.removeItem('datosCitaPrevia');
+                };
+                
+                // Cerrar sesión
+                $scope.logout = function() {
+                    if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                        localStorage.removeItem('userSession');
+                        localStorage.removeItem('datosCitaPrevia');
+                        window.location.href = 'login.html';
+                    }
+                };
+                
+                // Formatear fecha
+                $scope.formatearFecha = function(fechaHora) {
+                    if (!fechaHora) return '';
+                    const fecha = new Date(fechaHora);
+                    return fecha.toLocaleString('es-ES', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+                
+                // Inicializar
+                $scope.init = function() {
+                    if ($scope.verificarSesionPaciente()) {
+                        $scope.resetearFormulario();
+                        $scope.verificarDatosCitaPrevia();
+                        $scope.cargarMedicos();
+                        $scope.cargarMisCitas();
+                    }
+                };
+                
+                $scope.init();
+            });
+    </script>
+</body>
+
+</html>

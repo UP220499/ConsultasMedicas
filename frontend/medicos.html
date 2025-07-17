@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Médicos Disponibles</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">🏥 Consulta Médica</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="medicos.html">Médicos</a></li>
+                    <!-- Navegación dinámica según usuario -->
+                    <li class="nav-item" id="nav-login">
+                        <a class="nav-link" href="login.html">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item dropdown" id="nav-user" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <span id="user-name">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="user-dashboard">Mi Panel</a></li>
+                            <li><a class="dropdown-item" href="citas.html" id="nav-citas">Mis Citas</a></li>
+                            <li><a class="dropdown-item" href="admin-medicos.html" id="nav-admin" style="display: none;">Admin Médicos</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="cerrarSesion()">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ALERTA DE USUARIO -->
+    <div id="user-alert" class="alert alert-info mx-3 mt-3" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center">
+            <span>
+                <strong id="alert-user-name"></strong>, estás logueado como <span id="alert-user-type"></span>
+            </span>
+            <small class="text-muted" id="alert-user-email"></small>
+        </div>
+    </div>
+
+    <!-- ALERTA DE SESIÓN REQUERIDA -->
+    <div id="session-required-alert" class="alert alert-warning mx-3 mt-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="alert-heading">🔒 Autenticación Requerida</h5>
+                <p class="mb-0">Para agendar citas debes <strong>iniciar sesión</strong> o <strong>registrarte</strong> como paciente.</p>
+            </div>
+            <div>
+                <a href="login.html" class="btn btn-primary btn-sm me-2">Iniciar Sesión</a>
+                <button class="btn btn-outline-secondary btn-sm" onclick="dismissAlert()">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="container mt-4">
+        <h2 class="mb-3">👨‍⚕️ Médicos disponibles</h2>
+        
+        <!-- Información de funcionalidad -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">📋 Información del Sistema</h6>
+                                <p class="card-text mb-0" id="system-info">
+                                    Explora nuestro equipo médico. Para agendar citas, inicia sesión como paciente.
+                                </p>
+                            </div>
+                            <div>
+                                <span class="badge bg-secondary" id="user-status">Sin sesión</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Filtrar por especialidad:</label>
+                <select id="filtro-especialidad" class="form-select">
+                    <option value="">Todas las especialidades</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Acciones:</label><br>
+                <button id="toggle-btn" class="btn btn-outline-primary">Mostrar/Ocultar lista</button>
+                <button id="refresh-btn" class="btn btn-success">Actualizar datos</button>
+            </div>
+        </div>
+        
+        <div id="medicos-container">
+            <div id="loading" class="text-center" style="display: none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p>Cargando médicos...</p>
+            </div>
+            
+            <div id="no-medicos" class="alert alert-warning" style="display: none;">
+                <h5>No hay médicos disponibles</h5>
+                <p>No se encontraron médicos con los filtros aplicados.</p>
+            </div>
+            
+            <table id="tabla-medicos" class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th width="30%">👨‍⚕️ Médico</th>
+                        <th width="20%" class="text-center">🏥 Especialidad</th>
+                        <th width="25%">⏰ Horario</th>
+                        <th width="15%">📞 Contacto</th>
+                        <th width="10%" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-center mt-5 mb-3 text-muted">
+        <hr />
+        <p>&copy; 2025 Consulta Médica Online</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let medicosData = [];
+            let userSession = null;
+            let alertDismissed = false;
+            
+            // Verificar sesión al cargar
+            verificarSesion();
+            
+            // Toggle de tabla
+            $('#toggle-btn').click(function () {
+                $('#medicos-container').toggle();
+            });
+            
+            // Botón refresh
+            $('#refresh-btn').click(function () {
+                cargarMedicos();
+            });
+            
+            // Filtro por especialidad
+            $('#filtro-especialidad').change(function () {
+                const especialidad = $(this).val();
+                filtrarMedicos(especialidad);
+            });
+            
+            // Verificar sesión de usuario
+            function verificarSesion() {
+                const session = localStorage.getItem('userSession');
+                if (session) {
+                    try {
+                        userSession = JSON.parse(session);
+                        mostrarInfoUsuario(userSession);
+                        ocultarAlertaSesion();
+                    } catch (error) {
+                        console.error('Error al procesar sesión:', error);
+                        localStorage.removeItem('userSession');
+                        mostrarAlertaSesion();
+                    }
+                } else {
+                    mostrarAlertaSesion();
+                }
+            }
+            
+            // Mostrar información del usuario logueado
+            function mostrarInfoUsuario(userData) {
+                // Ocultar login, mostrar user menu
+                $('#nav-login').hide();
+                $('#nav-user').show();
+                $('#user-name').text(userData.nombre);
+                
+                // Configurar dashboard según tipo
+                const dashboardLink = $('#user-dashboard');
+                if (userData.tipo === 'admin') {
+                    dashboardLink.attr('href', 'dashboard-admin.html').text('👨‍⚕️ Panel Admin');
+                    $('#nav-admin').show();
+                    $('#user-status').removeClass('bg-secondary').addClass('bg-warning').text('Administrador');
+                    $('#system-info').text('Como administrador puedes gestionar médicos y todas las citas del sistema.');
+                } else {
+                    dashboardLink.attr('href', 'dashboard-paciente.html').text('👤 Mi Panel');
+                    $('#nav-admin').hide();
+                    $('#user-status').removeClass('bg-secondary').addClass('bg-success').text('Paciente');
+                    $('#system-info').text('Como paciente puedes agendar citas con nuestros médicos especializados.');
+                }
+                
+                // Mostrar alerta de usuario
+                $('#alert-user-name').text(userData.nombre);
+                $('#alert-user-type').text(userData.tipo === 'admin' ? 'Administrador' : 'Paciente');
+                $('#alert-user-email').text(userData.email);
+                $('#user-alert').show();
+            }
+            
+            // Mostrar alerta de sesión requerida
+            function mostrarAlertaSesion() {
+                if (!alertDismissed) {
+                    $('#session-required-alert').show();
+                }
+                $('#user-status').removeClass('bg-success bg-warning').addClass('bg-secondary').text('Sin sesión');
+                $('#system-info').text('Explora nuestro equipo médico. Para agendar citas, inicia sesión como paciente.');
+            }
+            
+            // Ocultar alerta de sesión
+            function ocultarAlertaSesion() {
+                $('#session-required-alert').hide();
+            }
+            
+            // Función para cargar médicos desde el backend
+            function cargarMedicos() {
+                $('#loading').show();
+                $('#tabla-medicos tbody').empty();
+                $('#no-medicos').hide();
+                
+                // Intentar cargar desde backend primero
+                $.ajax({
+                    url: 'http://localhost:8080/api/medicos',
+                    method: 'GET',
+                    timeout: 5000
+                }).done(function(data) {
+                    console.log('Médicos cargados desde backend:', data);
+                    medicosData = data;
+                    mostrarMedicos(data);
+                    cargarEspecialidades();
+                    $('#loading').hide();
+                }).fail(function(xhr, status, error) {
+                    console.log('Error del backend, cargando desde JSON local:', error);
+                    // Fallback al archivo JSON local
+                    $.getJSON("js/medicos.json", function (data) {
+                        console.log('Médicos cargados desde JSON local:', data);
+                        medicosData = data;
+                        mostrarMedicos(data);
+                        cargarEspecialidades();
+                        $('#loading').hide();
+                    }).fail(function () {
+                        $('#loading').hide();
+                        $('#no-medicos').show();
+                        alert("No se pudieron cargar los médicos. Verifique la conexión.");
+                    });
+                });
+            }
+            
+            // Función para mostrar médicos en la tabla
+            function mostrarMedicos(medicos) {
+                const tabla = $("#tabla-medicos tbody");
+                tabla.empty();
+                
+                if (medicos.length === 0) {
+                    $('#no-medicos').show();
+                    return;
+                }
+                
+                $('#no-medicos').hide();
+                
+                medicos.forEach(medico => {
+                    // Información de contacto solo si está disponible
+                    const contactoInfo = [];
+                    if (medico.email) contactoInfo.push(`📧 ${medico.email}`);
+                    if (medico.telefono) contactoInfo.push(`📞 ${medico.telefono}`);
+                    const contacto = contactoInfo.length > 0 ? contactoInfo.join('<br>') : '<span class="text-muted">Contacto en el hospital</span>';
+                    
+                    // Determinar botón de acción según usuario y validar sesión
+                    let botonAccion = '';
+                    if (userSession) {
+                        if (userSession.tipo === 'paciente') {
+                            botonAccion = `
+                                <button class="btn btn-success btn-sm w-100" onclick="agendarCitaValidada(${medico.id || 'null'}, '${medico.nombre}', '${medico.especialidad}')">
+                                    🏥 Agendar Cita
+                                </button>
+                            `;
+                        } else if (userSession.tipo === 'admin') {
+                            botonAccion = `
+                                <div class="btn-group-vertical btn-group-sm w-100">
+                                    <button class="btn btn-warning btn-sm" onclick="editarMedico(${medico.id || 'null'})">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="verCitasMedico(${medico.id || 'null'})">
+                                        📅 Ver Citas
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        botonAccion = `
+                            <button class="btn btn-outline-primary btn-sm w-100" onclick="mostrarRequiereLogin('${medico.nombre}')">
+                                🔒 Requiere Login
+                            </button>
+                        `;
+                    }
+                        
+                    const fila = `<tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 50px; height: 50px; font-size: 20px;">
+                                        👨‍⚕️
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold">${medico.nombre}</h6>
+                                    <small class="text-muted">Médico Especialista</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-primary fs-6 px-3 py-2">${medico.especialidad}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="text-info me-2">⏰</i>
+                                <small>${medico.horario}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <small>${contacto}</small>
+                        </td>
+                        <td class="text-center">
+                            ${botonAccion}
+                        </td>
+                    </tr>`;
+                    tabla.append(fila);
+                });
+            }
+            
+            // Función para cargar especialidades para el filtro
+            function cargarEspecialidades() {
+                const especialidades = [...new Set(medicosData.map(m => m.especialidad))];
+                const select = $('#filtro-especialidad');
+                
+                // Limpiar opciones existentes (excepto la primera)
+                select.find('option:not(:first)').remove();
+                
+                especialidades.forEach(esp => {
+                    select.append(`<option value="${esp}">${esp}</option>`);
+                });
+            }
+            
+            // Función para filtrar médicos
+            function filtrarMedicos(especialidad) {
+                if (!especialidad) {
+                    mostrarMedicos(medicosData);
+                } else {
+                    const medicosFiltrados = medicosData.filter(m => m.especialidad === especialidad);
+                    mostrarMedicos(medicosFiltrados);
+                }
+            }
+            
+            // Función para agendar cita con validación de sesión
+            window.agendarCitaValidada = function(medicoId, nombreMedico, especialidad) {
+                console.log('🔄 Iniciando proceso de agendamiento...');
+                console.log('📋 Datos recibidos:', {medicoId, nombreMedico, especialidad});
+                
+                // Verificar nuevamente la sesión al momento de agendar
+                const sessionActual = localStorage.getItem('userSession');
+                if (!sessionActual) {
+                    mostrarRequiereLogin(nombreMedico);
+                    return;
+                }
+                
+                try {
+                    const userData = JSON.parse(sessionActual);
+                    if (userData.tipo !== 'paciente') {
+                        alert('Solo los pacientes pueden agendar citas.');
+                        return;
+                    }
+                    
+                    // Verificar que la sesión no haya expirado (opcional: 24 horas)
+                    const loginTime = new Date(userData.loginTime);
+                    const ahora = new Date();
+                    const horasTranscurridas = (ahora - loginTime) / (1000 * 60 * 60);
+                    
+                    if (horasTranscurridas > 24) {
+                        alert('Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
+                        localStorage.removeItem('userSession');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // Buscar información completa del médico seleccionado
+                    const medicoCompleto = medicosData.find(m => m.id == medicoId);
+                    
+                    if (!medicoCompleto) {
+                        console.error('❌ Médico no encontrado en los datos. ID buscado:', medicoId);
+                        console.error('📋 Médicos disponibles:', medicosData.map(m => ({id: m.id, nombre: m.nombre})));
+                        alert('Error: No se encontró la información del médico seleccionado.');
+                        return;
+                    }
+                    
+                    console.log('✅ Médico completo encontrado:', medicoCompleto);
+                    
+                    // Proceder con el agendamiento - ASEGURAR QUE EL ID SEA NÚMERO
+                    const datosCita = {
+                        medico: {
+                            id: parseInt(medicoId),
+                            nombre: nombreMedico,
+                            especialidad: especialidad,
+                            horario: medicoCompleto.horario || '',
+                            email: medicoCompleto.email || '',
+                            telefono: medicoCompleto.telefono || ''
+                        },
+                        paciente: {
+                            nombre: userData.nombre,
+                            email: userData.email,
+                            telefono: userData.telefono || ''
+                        },
+                        timestamp: new Date().toISOString(),
+                        autoAbrir: true // Flag para auto-abrir el formulario
+                    };
+                    
+                    console.log('💾 Guardando datos de cita previa:', datosCita);
+                    localStorage.setItem('datosCitaPrevia', JSON.stringify(datosCita));
+                    
+                    // Mostrar confirmación antes de ir al dashboard
+                    const confirmar = confirm(
+                        `🏥 AGENDAR CITA\n\n` +
+                        `👨‍⚕️ Médico: ${nombreMedico}\n` +
+                        `🔬 Especialidad: ${especialidad}\n` +
+                        `⏰ Horario: ${medicoCompleto.horario || 'Consultar en el hospital'}\n\n` +
+                        `¿Continuar con el formulario de solicitud de cita?`
+                    );
+                    
+                    if (confirmar) {
+                        console.log('✅ Usuario confirmó. Redirigiendo al dashboard...');
+                        window.location.href = 'dashboard-paciente.html';
+                    } else {
+                        // Si no confirma, limpiar los datos
+                        localStorage.removeItem('datosCitaPrevia');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error al procesar sesión:', error);
+                    localStorage.removeItem('userSession');
+                    mostrarRequiereLogin(nombreMedico);
+                }
+            };
+            
+            // Función para mostrar mensaje de login requerido
+            window.mostrarRequiereLogin = function(nombreMedico = '') {
+                const mensaje = nombreMedico ? 
+                    `Para agendar una cita con ${nombreMedico}, necesitas estar registrado como paciente.` :
+                    'Para agendar citas necesitas estar registrado como paciente.';
+                
+                if (confirm(`${mensaje}\n\n¿Quieres ir a la página de login?`)) {
+                    window.location.href = 'login.html';
+                }
+            };
+            
+            // Función para editar médico (admin)
+            window.editarMedico = function(medicoId) {
+                if (!userSession || userSession.tipo !== 'admin') {
+                    alert('Acceso denegado. Solo administradores.');
+                    return;
+                }
+                window.location.href = `admin-medicos.html?edit=${medicoId}`;
+            };
+            
+            // Función para ver citas del médico (admin)
+            window.verCitasMedico = function(medicoId) {
+                if (!userSession || userSession.tipo !== 'admin') {
+                    alert('Acceso denegado. Solo administradores.');
+                    return;
+                }
+                window.location.href = `admin-citas.html?medico=${medicoId}`;
+            };
+            
+            // Función para cerrar sesión
+            window.cerrarSesion = function() {
+                if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                    localStorage.removeItem('userSession');
+                    localStorage.removeItem('datosCitaPrevia');
+                    window.location.reload();
+                }
+            };
+            
+            // Función para descartar alerta
+            window.dismissAlert = function() {
+                $('#session-required-alert').hide();
+                alertDismissed = true;
+            };
+            
+            // Cargar médicos al iniciar
+            cargarMedicos();
+        });
+    </script>
+</body>
+
+</html>

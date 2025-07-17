@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es" ng-app="adminCitasApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Administrar Citas - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+
+<body ng-controller="AdminCitasController">
+    <!-- NAVBAR ADMIN -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-dark" href="dashboard-admin.html">
+                👨‍⚕️ Admin - Gestión de Citas
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-dark" href="index.html">🏠 Inicio</a>
+                <a class="nav-link text-dark" href="dashboard-admin.html">📊 Dashboard</a>
+                <a class="nav-link text-dark" href="admin-medicos.html">👨‍⚕️ Médicos</a>
+                <a class="nav-link active text-dark fw-bold" href="admin-citas.html">📅 Citas</a>
+                <button class="btn btn-outline-dark btn-sm ms-2" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- BREADCRUMB -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">🏠 Inicio</a></li>
+                <li class="breadcrumb-item"><a href="dashboard-admin.html">👨‍⚕️ Admin</a></li>
+                <li class="breadcrumb-item active">Gestión de Citas</li>
+            </ol>
+        </nav>
+
+        <!-- CONTROLES Y FILTROS -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>🔍 Filtros y Búsqueda</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Buscar por paciente/email:</label>
+                        <input type="text" class="form-control" ng-model="filtros.texto" 
+                               placeholder="Nombre o email...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Estado:</label>
+                        <select class="form-select" ng-model="filtros.estado">
+                            <option value="">Todos los estados</option>
+                            <option value="PROGRAMADA">Programadas</option>
+                            <option value="COMPLETADA">Completadas</option>
+                            <option value="CANCELADA">Canceladas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Médico:</label>
+                        <select class="form-select" ng-model="filtros.medico">
+                            <option value="">Todos los médicos</option>
+                            <option ng-repeat="medico in medicos" value="{{ medico.id }}">
+                                {{ medico.nombre }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Acciones:</label><br>
+                        <button class="btn btn-primary btn-sm" ng-click="aplicarFiltros()">Filtrar</button>
+                        <button class="btn btn-secondary btn-sm" ng-click="limpiarFiltros()">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESTADÍSTICAS -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body text-center">
+                        <h5>Total Citas</h5>
+                        <h2>{{ citasFiltradas.length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body text-center">
+                        <h5>Programadas</h5>
+                        <h2>{{ contarPorEstado('PROGRAMADA') }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body text-center">
+                        <h5>Completadas</h5>
+                        <h2>{{ contarPorEstado('COMPLETADA') }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body text-center">
+                        <h5>Canceladas</h5>
+                        <h2>{{ contarPorEstado('CANCELADA') }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE CITAS -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>📅 Gestión de Citas</h4>
+                <button class="btn btn-success btn-sm" ng-click="cargarCitas()">
+                    <span ng-show="cargando" class="spinner-border spinner-border-sm me-1"></span>
+                    Actualizar
+                </button>
+            </div>
+            <div class="card-body">
+                <div ng-show="cargando" class="text-center">
+                    <div class="spinner-border"></div>
+                    <p>Cargando citas...</p>
+                </div>
+
+                <div ng-show="citasFiltradas.length === 0 && !cargando" class="alert alert-info">
+                    No se encontraron citas con los filtros aplicados.
+                </div>
+
+                <div class="table-responsive" ng-show="citasFiltradas.length > 0">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Paciente</th>
+                                <th>Contacto</th>
+                                <th>Médico</th>
+                                <th>Fecha y Hora</th>
+                                <th>Estado</th>
+                                <th>Motivo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="cita in citasFiltradas | orderBy:'-fechaHora'">
+                                <td>{{ cita.id }}</td>
+                                <td>
+                                    <strong>{{ cita.paciente }}</strong>
+                                </td>
+                                <td>
+                                    <small>
+                                        📧 {{ cita.email }}<br>
+                                        📞 {{ cita.telefono || 'Sin teléfono' }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {{ cita.medico.nombre }}<br>
+                                    <small class="text-muted">{{ cita.medico.especialidad }}</small>
+                                </td>
+                                <td>{{ formatearFecha(cita.fechaHora) }}</td>
+                                <td>
+                                    <select class="form-select form-select-sm" 
+                                            ng-model="cita.estado" 
+                                            ng-change="cambiarEstadoCita(cita)">
+                                        <option value="PROGRAMADA">Programada</option>
+                                        <option value="COMPLETADA">Completada</option>
+                                        <option value="CANCELADA">Cancelada</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <span ng-if="cita.motivo" title="{{ cita.motivo }}">
+                                        {{ cita.motivo.length > 30 ? (cita.motivo | limitTo:30) + '...' : cita.motivo }}
+                                    </span>
+                                    <span ng-if="!cita.motivo" class="text-muted">Sin motivo</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group-vertical btn-group-sm">
+                                        <button class="btn btn-outline-info btn-sm" ng-click="verDetalleCita(cita)">
+                                            Ver
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" ng-click="eliminarCita(cita.id)">
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalle de cita -->
+    <div class="modal fade" id="detalleCitaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalle de Cita #{{ citaSeleccionada.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div ng-if="citaSeleccionada">
+                        <p><strong>Paciente:</strong> {{ citaSeleccionada.paciente }}</p>
+                        <p><strong>Email:</strong> {{ citaSeleccionada.email }}</p>
+                        <p><strong>Teléfono:</strong> {{ citaSeleccionada.telefono || 'No proporcionado' }}</p>
+                        <p><strong>Médico:</strong> {{ citaSeleccionada.medico.nombre }}</p>
+                        <p><strong>Especialidad:</strong> {{ citaSeleccionada.medico.especialidad }}</p>
+                        <p><strong>Fecha y Hora:</strong> {{ formatearFecha(citaSeleccionada.fechaHora) }}</p>
+                        <p><strong>Estado:</strong> 
+                            <span class="badge" ng-class="{
+                                'bg-success': citaSeleccionada.estado === 'PROGRAMADA',
+                                'bg-info': citaSeleccionada.estado === 'COMPLETADA', 
+                                'bg-danger': citaSeleccionada.estado === 'CANCELADA'
+                            }">{{ citaSeleccionada.estado }}</span>
+                        </p>
+                        <p><strong>Motivo:</strong></p>
+                        <div class="alert alert-light">{{ citaSeleccionada.motivo || 'No especificado' }}</div>
+                        <p><strong>Fecha de creación:</strong> {{ formatearFecha(citaSeleccionada.fechaCreacion) }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        angular.module('adminCitasApp', [])
+            .controller('AdminCitasController', function ($scope, $http) {
+                $scope.citas = [];
+                $scope.citasFiltradas = [];
+                $scope.medicos = [];
+                $scope.citaSeleccionada = {};
+                $scope.cargando = false;
+                $scope.filtros = {
+                    texto: '',
+                    estado: '',
+                    medico: ''
+                };
+                
+                const API_BASE = 'http://localhost:8080/api';
+                
+                // Verificar sesión de admin
+                function verificarSesionAdmin() {
+                    const session = localStorage.getItem('userSession');
+                    if (!session) {
+                        alert('Debes iniciar sesión como administrador');
+                        window.location.href = 'login.html';
+                        return false;
+                    }
+                    
+                    const userData = JSON.parse(session);
+                    if (userData.tipo !== 'admin') {
+                        alert('Acceso denegado. Solo administradores.');
+                        window.location.href = 'login.html';
+                        return false;
+                    }
+                    return true;
+                }
+                
+                // Cargar citas
+                $scope.cargarCitas = function() {
+                    $scope.cargando = true;
+                    $http.get(API_BASE + '/citas')
+                        .then(function(response) {
+                            $scope.citas = response.data;
+                            $scope.aplicarFiltros();
+                        })
+                        .catch(function(error) {
+                            console.error('Error al cargar citas:', error);
+                            alert('Error al cargar las citas');
+                        })
+                        .finally(function() {
+                            $scope.cargando = false;
+                        });
+                };
+                
+                // Cargar médicos
+                $scope.cargarMedicos = function() {
+                    $http.get(API_BASE + '/medicos')
+                        .then(function(response) {
+                            $scope.medicos = response.data;
+                        })
+                        .catch(function(error) {
+                            console.error('Error al cargar médicos:', error);
+                        });
+                };
+                
+                // Aplicar filtros
+                $scope.aplicarFiltros = function() {
+                    $scope.citasFiltradas = $scope.citas.filter(function(cita) {
+                        const cumpleTexto = !$scope.filtros.texto || 
+                            cita.paciente.toLowerCase().includes($scope.filtros.texto.toLowerCase()) ||
+                            cita.email.toLowerCase().includes($scope.filtros.texto.toLowerCase());
+                        
+                        const cumpleEstado = !$scope.filtros.estado || cita.estado === $scope.filtros.estado;
+                        
+                        const cumpleMedico = !$scope.filtros.medico || 
+                            cita.medico.id.toString() === $scope.filtros.medico;
+                        
+                        return cumpleTexto && cumpleEstado && cumpleMedico;
+                    });
+                };
+                
+                // Limpiar filtros
+                $scope.limpiarFiltros = function() {
+                    $scope.filtros = {
+                        texto: '',
+                        estado: '',
+                        medico: ''
+                    };
+                    $scope.aplicarFiltros();
+                };
+                
+                // Contar por estado
+                $scope.contarPorEstado = function(estado) {
+                    return $scope.citasFiltradas.filter(c => c.estado === estado).length;
+                };
+                
+                // Cambiar estado de cita
+                $scope.cambiarEstadoCita = function(cita) {
+                    $http.put(API_BASE + '/citas/' + cita.id + '/estado?estado=' + cita.estado)
+                        .then(function(response) {
+                            console.log('Estado actualizado');
+                        })
+                        .catch(function(error) {
+                            console.error('Error al cambiar estado:', error);
+                            alert('Error al cambiar el estado de la cita');
+                        });
+                };
+                
+                // Ver detalle de cita
+                $scope.verDetalleCita = function(cita) {
+                    $scope.citaSeleccionada = cita;
+                    const modal = new bootstrap.Modal(document.getElementById('detalleCitaModal'));
+                    modal.show();
+                };
+                
+                // Eliminar cita
+                $scope.eliminarCita = function(citaId) {
+                    if (!confirm('¿Estás seguro de eliminar esta cita?')) {
+                        return;
+                    }
+                    
+                    $http.delete(API_BASE + '/citas/' + citaId)
+                        .then(function(response) {
+                            alert('Cita eliminada correctamente');
+                            $scope.cargarCitas();
+                        })
+                        .catch(function(error) {
+                            console.error('Error al eliminar cita:', error);
+                            alert('Error al eliminar la cita');
+                        });
+                };
+                
+                // Formatear fecha
+                $scope.formatearFecha = function(fechaHora) {
+                    if (!fechaHora) return '';
+                    const fecha = new Date(fechaHora);
+                    return fecha.toLocaleString('es-ES', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                };
+                
+                // Watchers para filtros automáticos
+                $scope.$watch('filtros.texto', $scope.aplicarFiltros);
+                $scope.$watch('filtros.estado', $scope.aplicarFiltros);
+                $scope.$watch('filtros.medico', $scope.aplicarFiltros);
+                
+                // Función global para logout
+                window.logout = function() {
+                    if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                        localStorage.removeItem('userSession');
+                        window.location.href = 'login.html';
+                    }
+                };
+                
+                // Inicializar
+                if (verificarSesionAdmin()) {
+                    $scope.cargarCitas();
+                    $scope.cargarMedicos();
+                }
+            });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrador - Consulta Médica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- NAVBAR ADMIN -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <strong>👨‍⚕️ Admin - Consulta Médica</strong>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-dark me-3" href="index.html">
+                    Inicio
+                </a>
+                <span class="navbar-text me-3 text-dark" id="admin-info">
+                    Bienvenido, Admin
+                </span>
+                <button class="btn btn-outline-dark btn-sm" onclick="logout()">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+
+        <div class="row">
+            <!-- ESTADÍSTICAS GENERALES -->
+            <div class="col-12 mb-4">
+                <div class="alert alert-warning">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4 class="alert-heading">🛠️ Panel de Administración</h4>
+                            <p>Tienes acceso completo al sistema. Puedes gestionar médicos, ver todas las citas, y administrar el sistema.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- ESTADÍSTICAS -->
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">👨‍⚕️ Médicos</h5>
+                        <h2 id="total-medicos">-</h2>
+                        <p class="card-text">Total registrados</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">📅 Citas Totales</h5>
+                        <h2 id="total-citas">-</h2>
+                        <p class="card-text">En el sistema</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">⏱️ Programadas</h5>
+                        <h2 id="citas-programadas">-</h2>
+                        <p class="card-text">Próximas citas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-secondary mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">🏥 Especialidades</h5>
+                        <h2 id="total-especialidades">-</h2>
+                        <p class="card-text">Disponibles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCIONES RÁPIDAS -->
+        <div class="row">
+            <div class="col-12">
+                <h3>🚀 Acciones Rápidas</h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">👨‍⚕️ Gestionar Médicos</h5>
+                                <p class="card-text">Agregar, editar o eliminar médicos del sistema</p>
+                                <a href="admin-medicos.html" class="btn btn-primary">Administrar Médicos</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">📅 Ver Todas las Citas</h5>
+                                <p class="card-text">Consultar y gestionar todas las citas del sistema</p>
+                                <a href="admin-citas.html" class="btn btn-success">Ver Citas</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">🏠 Página Principal</h5>
+                                <p class="card-text">Volver al inicio del sistema</p>
+                                <a href="index.html" class="btn btn-warning">Ir al Inicio</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CITAS RECIENTES -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📅 Últimas Citas Registradas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="loading-citas" class="text-center">
+                            <div class="spinner-border" role="status"></div>
+                            <p>Cargando últimas citas...</p>
+                        </div>
+                        <div id="tabla-citas-recientes" style="display: none;">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Paciente</th>
+                                            <th>Médico</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="citas-recientes-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER CON NAVEGACIÓN -->
+    <footer class="mt-5 py-4 bg-light border-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted">&copy; 2025 Consulta Médica Online - Panel de Administración</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        
+        // Verificar sesión de admin
+        function verificarSesionAdmin() {
+            const session = localStorage.getItem('userSession');
+            if (!session) {
+                alert('Debes iniciar sesión como administrador');
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            const userData = JSON.parse(session);
+            if (userData.tipo !== 'admin') {
+                alert('Acceso denegado. Solo administradores.');
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            document.getElementById('admin-info').textContent = `Bienvenido, ${userData.nombre}`;
+            return true;
+        }
+        
+        // Cerrar sesión
+        function logout() {
+            if (confirm('¿Seguro que quieres cerrar sesión?')) {
+                localStorage.removeItem('userSession');
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // Cargar estadísticas
+        async function cargarEstadisticas() {
+            try {
+                // Cargar médicos
+                const medicosResponse = await fetch(API_BASE + '/medicos');
+                if (medicosResponse.ok) {
+                    const medicos = await medicosResponse.json();
+                    document.getElementById('total-medicos').textContent = medicos.length;
+                    
+                    const especialidades = [...new Set(medicos.map(m => m.especialidad))];
+                    document.getElementById('total-especialidades').textContent = especialidades.length;
+                }
+                
+                // Cargar citas
+                const citasResponse = await fetch(API_BASE + '/citas');
+                if (citasResponse.ok) {
+                    const citas = await citasResponse.json();
+                    document.getElementById('total-citas').textContent = citas.length;
+                    
+                    const programadas = citas.filter(c => c.estado === 'PROGRAMADA');
+                    document.getElementById('citas-programadas').textContent = programadas.length;
+                    
+                    mostrarCitasRecientes(citas.slice(-5));
+                }
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+        
+        // Mostrar citas recientes
+        function mostrarCitasRecientes(citas) {
+            const tbody = document.getElementById('citas-recientes-body');
+            tbody.innerHTML = '';
+            
+            citas.forEach(cita => {
+                const fila = `
+                    <tr>
+                        <td>${cita.id}</td>
+                        <td>${cita.paciente}</td>
+                        <td>${cita.medico ? cita.medico.nombre : 'N/A'}</td>
+                        <td>${new Date(cita.fechaHora).toLocaleString('es-ES')}</td>
+                        <td>
+                            <span class="badge ${getBadgeClass(cita.estado)}">
+                                ${cita.estado}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += fila;
+            });
+            
+            document.getElementById('loading-citas').style.display = 'none';
+            document.getElementById('tabla-citas-recientes').style.display = 'block';
+        }
+        
+        function getBadgeClass(estado) {
+            switch(estado) {
+                case 'PROGRAMADA': return 'bg-success';
+                case 'COMPLETADA': return 'bg-info';
+                case 'CANCELADA': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+        
+        // Inicializar dashboard
+        window.onload = function() {
+            if (verificarSesionAdmin()) {
+                cargarEstadisticas();
+            }
+        };
+    </script>
+</body>
+
+</html>
