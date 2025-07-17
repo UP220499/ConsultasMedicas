@@ -17,11 +17,11 @@
                 👨‍⚕️ Admin - Gestión de Citas
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link text-dark" href="index.html">🏠 Inicio</a>
-                <a class="nav-link text-dark" href="dashboard-admin.html">📊 Dashboard</a>
-                <a class="nav-link text-dark" href="admin-medicos.html">👨‍⚕️ Médicos</a>
-                <a class="nav-link active text-dark fw-bold" href="admin-citas.html">📅 Citas</a>
-                <button class="btn btn-outline-dark btn-sm ms-2" onclick="logout()">🚪 Cerrar Sesión</button>
+                <a class="nav-link text-dark" href="index.html">Inicio</a>
+                <a class="nav-link text-dark" href="dashboard-admin.html">Dashboard</a>
+                <a class="nav-link text-dark" href="admin-medicos.html">Médicos</a>
+                <a class="nav-link active text-dark fw-bold" href="admin-citas.html">Citas</a>
+                <button class="btn btn-outline-dark btn-sm ms-2" onclick="logout()">Cerrar Sesión</button>
             </div>
         </div>
     </nav>
@@ -30,8 +30,8 @@
         <!-- BREADCRUMB -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">🏠 Inicio</a></li>
-                <li class="breadcrumb-item"><a href="dashboard-admin.html">👨‍⚕️ Admin</a></li>
+                <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="dashboard-admin.html">Admin</a></li>
                 <li class="breadcrumb-item active">Gestión de Citas</li>
             </ol>
         </nav>
@@ -39,7 +39,7 @@
         <!-- CONTROLES Y FILTROS -->
         <div class="card mb-4">
             <div class="card-header">
-                <h4>🔍 Filtros y Búsqueda</h4>
+                <h4>Filtros y Búsqueda</h4>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -114,7 +114,7 @@
         <!-- TABLA DE CITAS -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4>📅 Gestión de Citas</h4>
+                <h4>Gestión de Citas</h4>
                 <button class="btn btn-success btn-sm" ng-click="cargarCitas()">
                     <span ng-show="cargando" class="spinner-border spinner-border-sm me-1"></span>
                     Actualizar
@@ -152,8 +152,8 @@
                                 </td>
                                 <td>
                                     <small>
-                                        📧 {{ cita.email }}<br>
-                                        📞 {{ cita.telefono || 'Sin teléfono' }}
+                                        {{ cita.email }}<br>
+                                        {{ cita.telefono || 'Sin teléfono' }}
                                     </small>
                                 </td>
                                 <td>

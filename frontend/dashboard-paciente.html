@@ -14,7 +14,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-success">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <strong>👤 Mi Panel - Consulta Médica</strong>
+                <strong>Mi Panel - Consulta Médica</strong>
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link text-white me-3" href="index.html">
@@ -38,7 +38,7 @@
                 <div class="alert alert-success">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h4 class="alert-heading">¡Bienvenido {{ pacienteInfo.nombre }}! 👋</h4>
+                            <h4 class="alert-heading">¡Bienvenido {{ pacienteInfo.nombre }}! </h4>
                             <p>Desde aquí puedes solicitar nuevas citas médicas y consultar tu historial.</p>
                             <p class="mb-0">
                                 <strong>Email:</strong> {{ pacienteInfo.email }} | 
@@ -52,11 +52,11 @@
 
         <!-- ALERTA DE CITA PENDIENTE -->
         <div ng-show="datosCitaPrevia" class="alert alert-info mb-3">
-            <h5>🏥 Completar Solicitud de Cita</h5>
+            <h5>Completar Solicitud de Cita</h5>
             <p>Has seleccionado al <strong>{{ datosCitaPrevia.medico.nombre }}</strong> ({{ datosCitaPrevia.medico.especialidad }}).</p>
             <div class="d-flex gap-2">
-                <button class="btn btn-primary btn-sm" ng-click="usarDatosPrevios()">✅ Continuar con este médico</button>
-                <button class="btn btn-outline-secondary btn-sm" ng-click="descartarDatosPrevios()">❌ Seleccionar otro</button>
+                <button class="btn btn-primary btn-sm" ng-click="usarDatosPrevios()">Continuar con este médico</button>
+                <button class="btn btn-outline-secondary btn-sm" ng-click="descartarDatosPrevios()">Seleccionar otro</button>
             </div>
         </div>
 
@@ -65,7 +65,7 @@
             <div class="col-md-4">
                 <div class="card text-white bg-primary mb-3">
                     <div class="card-body text-center">
-                        <h5 class="card-title">📅 Mis Citas</h5>
+                        <h5 class="card-title">Mis Citas</h5>
                         <h2>{{ misCitas.length }}</h2>
                         <p class="card-text">Total de citas</p>
                     </div>
@@ -74,7 +74,7 @@
             <div class="col-md-4">
                 <div class="card text-white bg-info mb-3">
                     <div class="card-body text-center">
-                        <h5 class="card-title">⏱️ Próximas</h5>
+                        <h5 class="card-title">Próximas</h5>
                         <h2>{{ citasProgramadas.length }}</h2>
                         <p class="card-text">Citas programadas</p>
                     </div>
@@ -83,7 +83,7 @@
             <div class="col-md-4">
                 <div class="card text-white bg-secondary mb-3">
                     <div class="card-body text-center">
-                        <h5 class="card-title">✅ Completadas</h5>
+                        <h5 class="card-title">Completadas</h5>
                         <h2>{{ citasCompletadas.length }}</h2>
                         <p class="card-text">Consultas realizadas</p>
                     </div>
@@ -96,7 +96,7 @@
             <div class="col-md-4 mb-3">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5 class="card-title">🏥 Solicitar Nueva Cita</h5>
+                        <h5 class="card-title">Solicitar Nueva Cita</h5>
                         <p class="card-text">Agenda una nueva consulta médica</p>
                         <button class="btn btn-success" ng-click="mostrarFormularioCita = !mostrarFormularioCita">
                             {{ mostrarFormularioCita ? 'Ocultar Formulario' : 'Solicitar Cita' }}
@@ -107,7 +107,7 @@
             <div class="col-md-4 mb-3">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5 class="card-title">👨‍⚕️ Ver Médicos</h5>
+                        <h5 class="card-title">Ver Médicos</h5>
                         <p class="card-text">Consulta nuestros médicos disponibles</p>
                         <a href="medicos.html" class="btn btn-primary">Ver Médicos</a>
                     </div>
@@ -116,7 +116,7 @@
             <div class="col-md-4 mb-3">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5 class="card-title">🏠 Página Principal</h5>
+                        <h5 class="card-title"> Página Principal</h5>
                         <p class="card-text">Volver al inicio del sistema</p>
                         <a href="index.html" class="btn btn-info">Ir al Inicio</a>
                     </div>
@@ -130,7 +130,7 @@
                 <h4>Solicitar Nueva Cita Médica</h4>
                 <div ng-show="medicoPreseleccionado" class="mt-2">
                     <small class="d-flex align-items-center">
-                        <span class="badge bg-light text-dark me-2">✅ Médico seleccionado desde la lista</span>
+                        <span class="badge bg-light text-dark me-2">Médico seleccionado desde la lista</span>
                         <strong>{{ nuevaCita.medico.nombre }}</strong> - {{ nuevaCita.medico.especialidad }}
                     </small>
                 </div>
@@ -143,9 +143,9 @@
                             <div class="alert alert-info">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong>👤 Paciente:</strong> {{ pacienteInfo.nombre }}
+                                        <strong>Paciente:</strong> {{ pacienteInfo.nombre }}
                                         <span class="mx-2">|</span>
-                                        <strong>📧 Email:</strong> {{ pacienteInfo.email }}
+                                        <strong>Email:</strong> {{ pacienteInfo.email }}
                                     </div>
                                     <small class="text-muted">Información automática</small>
                                 </div>
@@ -154,7 +154,7 @@
 
                         <!-- TELÉFONO EDITABLE -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">📞 Teléfono de Contacto</label>
+                            <label class="form-label">Teléfono de Contacto</label>
                             <input type="tel" class="form-control" ng-model="nuevaCita.telefono" 
                                    placeholder="+52 55 1234 5678" ng-pattern="/^[\+]?[0-9\s\-\(\)]{10,15}$/">
                             <small class="text-muted">
@@ -164,25 +164,25 @@
 
                         <!-- MÉDICO -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">👨‍⚕️ Médico *</label>
+                            <label class="form-label">Médico *</label>
                             <select class="form-select" ng-model="nuevaCita.medico" 
                                     ng-options="medico as (medico.nombre + ' - ' + medico.especialidad) for medico in medicos track by medico.id" 
                                     required name="medico" ng-class="{'border-success': nuevaCita.medico && medicoPreseleccionado}">
                                 <option value="">Selecciona un médico</option>
                             </select>
                             <small ng-show="nuevaCita.medico && nuevaCita.medico.horario" class="text-muted">
-                                <strong>📅 Horario:</strong> {{ nuevaCita.medico.horario }}
+                                <strong>Horario:</strong> {{ nuevaCita.medico.horario }}
                             </small>
                             <div ng-show="!nuevaCita.medico" class="mt-2">
                                 <a href="medicos.html" class="btn btn-outline-primary btn-sm">
-                                    👨‍⚕️ Ver lista completa de médicos
+                                    Ver lista completa de médicos
                                 </a>
                             </div>
                         </div>
 
                         <!-- FECHA Y HORA -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">📅 Fecha y Hora Preferida *</label>
+                            <label class="form-label">Fecha y Hora Preferida *</label>
                             <input type="datetime-local" class="form-control" ng-model="nuevaCita.fechaHora" 
                                    required name="fechaHora" ng-min="fechaMinima">
                             <small class="text-muted">Selecciona una fecha futura (mínimo 1 hora desde ahora)</small>
@@ -190,7 +190,7 @@
 
                         <!-- MOTIVO -->
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">📝 Motivo de la Consulta *</label>
+                            <label class="form-label">Motivo de la Consulta *</label>
                             <textarea class="form-control" ng-model="nuevaCita.motivo" rows="3" 
                                       placeholder="Describe brevemente el motivo de tu consulta" 
                                       required name="motivo" maxlength="500"></textarea>
@@ -200,7 +200,7 @@
                         <!-- INFORMACIÓN IMPORTANTE -->
                         <div class="col-12 mb-3">
                             <div class="alert alert-warning">
-                                <strong>📋 Información importante:</strong>
+                                <strong>Información importante:</strong>
                                 <ul class="mb-0 mt-2">
                                     <li>Tu solicitud será revisada por el personal médico</li>
                                     <li>Te contactaremos para confirmar la disponibilidad</li>
@@ -214,14 +214,14 @@
                         <div class="col-12">
                             <button type="submit" class="btn btn-success me-2" ng-disabled="cargando || citaForm.$invalid">
                                 <span ng-show="cargando" class="spinner-border spinner-border-sm me-2"></span>
-                                <span ng-hide="cargando">🏥 Solicitar Cita</span>
+                                <span ng-hide="cargando">Solicitar Cita</span>
                                 <span ng-show="cargando">Enviando...</span>
                             </button>
                             <button type="button" class="btn btn-secondary me-2" ng-click="cancelarFormulario()">
                                 Cancelar
                             </button>
                             <button type="button" class="btn btn-outline-info" ng-click="volverASeleccionarMedico()">
-                                👨‍⚕️ Cambiar Médico
+                                Cambiar Médico
                             </button>
                         </div>
                     </div>
@@ -232,7 +232,7 @@
         <!-- MIS CITAS -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5>📅 Mi Historial de Citas</h5>
+                <h5> Mi Historial de Citas</h5>
             </div>
             <div class="card-body">
                 <div ng-show="cargandoCitas" class="text-center">
@@ -368,7 +368,7 @@
                     if (datosPrevios) {
                         try {
                             $scope.datosCitaPrevia = JSON.parse(datosPrevios);
-                            console.log('✅ Datos de cita previa encontrados:', $scope.datosCitaPrevia);
+                            console.log('Datos de cita previa encontrados:', $scope.datosCitaPrevia);
                             
                             // Si tiene flag autoAbrir, mostrar formulario automáticamente
                             if ($scope.datosCitaPrevia.autoAbrir) {
@@ -376,7 +376,7 @@
                                 $scope.datosCitaPrevia.autoAbrir = false; // Evitar auto-abrir repetido
                             }
                         } catch (error) {
-                            console.error('❌ Error al procesar datos previos:', error);
+                            console.error('Error al procesar datos previos:', error);
                             localStorage.removeItem('datosCitaPrevia');
                         }
                     }
@@ -385,13 +385,13 @@
                 // Pre-seleccionar médico cuando se cargan los datos
                 $scope.preSeleccionarMedico = function() {
                     if ($scope.datosCitaPrevia && $scope.medicos && $scope.medicos.length > 0) {
-                        console.log('🔍 Buscando médico ID:', $scope.datosCitaPrevia.medico.id);
+                        console.log('Buscando médico ID:', $scope.datosCitaPrevia.medico.id);
                         
                         const medicoEncontrado = $scope.medicos.find(m => m.id == $scope.datosCitaPrevia.medico.id);
                         if (medicoEncontrado) {
                             $scope.nuevaCita.medico = medicoEncontrado;
                             $scope.medicoPreseleccionado = true;
-                            console.log('✅ Médico pre-seleccionado correctamente:', medicoEncontrado.nombre);
+                            console.log('Médico pre-seleccionado correctamente:', medicoEncontrado.nombre);
                             
                             // Limpiar datos previos ya que fueron aplicados
                             localStorage.removeItem('datosCitaPrevia');
@@ -402,7 +402,7 @@
                                 $scope.$apply();
                             }
                         } else {
-                            console.error('❌ Médico no encontrado en la lista cargada. ID buscado:', $scope.datosCitaPrevia.medico.id);
+                            console.error('Médico no encontrado en la lista cargada. ID buscado:', $scope.datosCitaPrevia.medico.id);
                         }
                     }
                 };
@@ -455,11 +455,11 @@
                 
                 // Cargar médicos
                 $scope.cargarMedicos = function() {
-                    console.log('🔄 Cargando médicos...');
+                    console.log('Cargando médicos...');
                     $http.get(API_BASE + '/medicos')
                         .then(function(response) {
                             $scope.medicos = response.data;
-                            console.log('✅ Médicos cargados:', $scope.medicos.length, 'médicos');
+                            console.log('Médicos cargados:', $scope.medicos.length, 'médicos');
                             
                             // Después de cargar médicos, intentar pre-seleccionar si hay datos previos
                             if ($scope.datosCitaPrevia) {
@@ -469,11 +469,11 @@
                             }
                         })
                         .catch(function(error) {
-                            console.error('❌ Error al cargar médicos:', error);
+                            console.error('Error al cargar médicos:', error);
                             // Fallback a datos locales si el backend falla
                             $.getJSON("js/medicos.json", function (data) {
                                 $scope.medicos = data;
-                                console.log('✅ Médicos cargados desde JSON local:', $scope.medicos.length);
+                                console.log('Médicos cargados desde JSON local:', $scope.medicos.length);
                                 if ($scope.datosCitaPrevia) {
                                     setTimeout(() => {
                                         $scope.preSeleccionarMedico();
