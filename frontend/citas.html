@@ -38,7 +38,7 @@
                     <div class="alert alert-info">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 class="alert-heading">📅 Disponibilidad de Citas</h4>
+                                <h4 class="alert-heading">Disponibilidad de Citas</h4>
                                 <p class="mb-2">Consulta las fechas y horarios que ya están ocupados para planificar mejor tu cita médica.</p>
                                 <small class="text-muted">
                                     <strong>Nota:</strong> Esta información es solo para referencia. Para agendar tu cita o ver información detallada, necesitas una cuenta.
@@ -46,10 +46,10 @@
                             </div>
                             <div class="col-md-4 text-end">
                                 <a href="login.html" class="btn btn-primary me-2">
-                                    🔑 Iniciar Sesión
+                                    Iniciar Sesión
                                 </a>
                                 <a href="login.html#register" class="btn btn-success">
-                                    📝 Registrarse
+                                    Registrarse
                                 </a>
                             </div>
                         </div>
@@ -85,17 +85,17 @@
             <!-- VISTA PÚBLICA DE CITAS -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>📋 Fechas y Horarios Ocupados</h4>
+                    <h4>Fechas y Horarios Ocupados</h4>
                     <div>
                         <span class="badge bg-secondary">{{ citasFiltradas.length }} citas programadas</span>
                         <button class="btn btn-outline-primary btn-sm ms-2" ng-click="cargarCitasPublicas()">
-                            🔄 Actualizar
+                            Actualizar
                         </button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div ng-show="citasFiltradas.length === 0 && !cargandoCitasPublicas" class="alert alert-success">
-                        <h5>🎉 ¡Excelente!</h5>
+                        <h5>¡Excelente!</h5>
                         <p class="mb-0">
                             {{ filtroMedicoPublico || filtroFechaPublica ? 
                                'No hay citas programadas con estos filtros. ¡Perfecto momento para agendar!' : 
@@ -107,7 +107,7 @@
                         <!-- INFORMACIÓN IMPORTANTE -->
                         <div class="alert alert-warning mb-3">
                             <small>
-                                <strong>🔒 Privacidad protegida:</strong> Solo se muestran fechas, horarios y médicos ocupados. 
+                                <strong>Privacidad protegida:</strong> Solo se muestran fechas, horarios y médicos ocupados. 
                                 La información personal de los pacientes está protegida.
                             </small>
                         </div>
@@ -117,11 +117,11 @@
                             <table class="table table-striped">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>📅 Fecha y Hora</th>
-                                        <th>👨‍⚕️ Médico</th>
-                                        <th>🏥 Especialidad</th>
-                                        <th>📍 Estado</th>
-                                        <th>💡 Sugerencia</th>
+                                        <th>Fecha y Hora</th>
+                                        <th>Médico</th>
+                                        <th>Especialidad</th>
+                                        <th>Estado</th>
+                                        <th>Sugerencia</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -155,31 +155,31 @@
                     <div class="text-center mt-4">
                         <div class="card bg-gradient" style="background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);">
                             <div class="card-body p-4">
-                                <h5 class="card-title text-primary">🚀 ¿Listo para agendar tu cita?</h5>
+                                <h5 class="card-title text-primary">¿Listo para agendar tu cita?</h5>
                                 <p class="card-text mb-4">Únete a nuestro sistema y accede a todas las funcionalidades médicas</p>
                                 <div class="btn-group mb-3" role="group">
                                     <a href="login.html" class="btn btn-primary btn-lg">
-                                        🔑 Ya tengo cuenta
+                                        Ya tengo cuenta
                                     </a>
                                     <a href="login.html#register" class="btn btn-success btn-lg">
-                                        📝 Crear cuenta nueva
+                                        Crear cuenta nueva
                                     </a>
                                 </div>
                                 <div class="mt-3 p-3 bg-white rounded">
-                                    <h6 class="text-success mb-2">🌟 Beneficios de tu cuenta:</h6>
+                                    <h6 class="text-success mb-2">Beneficios de tu cuenta:</h6>
                                     <div class="row text-start">
                                         <div class="col-md-6">
                                             <small class="text-muted">
-                                                ✅ Agendar citas personalizadas<br>
-                                                ✅ Ver tu historial médico completo<br>
-                                                ✅ Recibir notificaciones importantes
+                                                Agendar citas personalizadas<br>
+                                                Ver tu historial médico completo<br>
+                                                Recibir notificaciones importantes
                                             </small>
                                         </div>
                                         <div class="col-md-6">
                                             <small class="text-muted">
-                                                ✅ Cancelar o reagendar citas<br>
-                                                ✅ Acceso a información detallada<br>
-                                                ✅ Gestión completa de tu salud
+                                                Cancelar o reagendar citas<br>
+                                                Acceso a información detallada<br>
+                                                Gestión completa de tu salud
                                             </small>
                                         </div>
                                     </div>
@@ -197,7 +197,7 @@
             <div class="alert alert-info">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <strong>{{ tipoUsuario === 'admin' ? '👨‍⚕️ Administrador' : '👤 Paciente' }}:</strong> {{ nombreUsuario }}
+                        <strong>{{ tipoUsuario === 'admin' ? 'Administrador' : 'Paciente' }}:</strong> {{ nombreUsuario }}
                         <span ng-show="tipoUsuario === 'admin'"> - Viendo todas las citas del sistema</span>
                         <span ng-show="tipoUsuario === 'paciente'"> - Viendo solo tus citas</span>
                     </div>
@@ -207,7 +207,7 @@
 
             <!-- CONTENIDO PARA PACIENTES -->
             <div ng-show="tipoUsuario === 'paciente'">
-                <h3>📅 Mis Citas Médicas</h3>
+                <h3>Mis Citas Médicas</h3>
                 <p class="text-muted">Aquí puedes ver y gestionar únicamente tus citas programadas.</p>
                 
                 <div class="row mb-4">
@@ -225,10 +225,10 @@
                     </div>
                     <div class="col-md-4">
                         <a href="dashboard-paciente.html" class="btn btn-success w-100 mb-2">
-                            🏥 Agendar Nueva Cita
+                            Agendar Nueva Cita
                         </a>
                         <button class="btn btn-outline-primary w-100" ng-click="cargarMisCitas()">
-                            🔄 Actualizar Mis Citas
+                            Actualizar Mis Citas
                         </button>
                     </div>
                 </div>
@@ -236,7 +236,7 @@
 
             <!-- CONTENIDO PARA ADMINISTRADORES -->
             <div ng-show="tipoUsuario === 'admin'">
-                <h3>👨‍⚕️ Gestión de Todas las Citas</h3>
+                <h3>Gestión de Todas las Citas</h3>
                 <p class="text-muted">Como administrador puedes ver, editar y gestionar todas las citas del sistema.</p>
                 
                 <!-- BUSCAR CITAS POR EMAIL (SOLO ADMIN) -->
