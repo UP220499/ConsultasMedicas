@@ -9,8 +9,47 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <style>
         body { background: #f4f7fa; }
-        .card { border-radius: 1rem; }
+        .navbar {
+            box-shadow: 0 2px 8px rgba(76,110,245,0.08);
+            background: linear-gradient(90deg, #1a237e 0%, #00bcd4 100%);
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .btn {
+            color: #fff !important;
+        }
+        .navbar .nav-link.active, .navbar .nav-link:hover {
+            color: #00bcd4 !important;
+            font-weight: bold;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 2px 16px rgba(76,110,245,0.08);
+            border: none;
+        }
+        .card-header {
+            border-radius: 1rem 1rem 0 0;
+            background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+            color: #fff;
+        }
         .table th, .table td { vertical-align: middle; }
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: #f4f7fa;
+        }
+        .btn, .form-select, .form-control {
+            border-radius: 0.6rem;
+        }
+        .btn-info, .btn-success, .btn-primary, .btn-outline-info, .btn-outline-success {
+            box-shadow: 0 2px 8px rgba(76,110,245,0.07);
+        }
+        .btn-success, .btn-outline-success {
+            background-color: #00bcd4;
+            border-color: #00bcd4;
+            color: #fff;
+        }
+        .btn-success:hover, .btn-outline-success:hover {
+            background-color: #1976d2;
+            border-color: #1976d2;
+            color: #fff;
+        }
         .footer-links a {
             color: #fff;
             text-decoration: underline;
@@ -19,24 +58,44 @@
         .footer-links a:hover {
             color: #ffd700;
         }
+        .alert {
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(76,110,245,0.07);
+        }
+        .badge {
+            font-size: 1em;
+            padding: 0.5em 1em;
+            border-radius: 0.7em;
+        }
+        .table-responsive {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        /* Colores personalizados para estadísticas */
+        .bg-programadas {
+            background-color: #97bc89 !important;
+            color: #fff !important;
+        }
+        .bg-completadas {
+            background-color: #ceb1f7 !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 
 <body ng-controller="PacienteDashboardController">
     <!-- NAVBAR PACIENTE -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="index.html">
                 <strong>Mi Panel - Consulta Médica</strong>
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link text-white me-3" href="index.html">
-                     Inicio
-                </a>
-                <span class="navbar-text me-3">
+                <a class="nav-link" href="index.html">Inicio</a>
+                <span class="navbar-text me-3" style="color:#fff;">
                     Bienvenido, {{ pacienteInfo.nombre }}
                 </span>
-                <button class="btn btn-outline-light btn-sm" ng-click="logout()">
+                <button class="btn btn-outline-success btn-sm" ng-click="logout()">
                     Cerrar Sesión
                 </button>
             </div>
@@ -85,7 +144,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card text-white bg-info mb-3">
+                <div class="card text-white bg-programadas mb-3">
                     <div class="card-body text-center">
                         <h5 class="card-title">Próximas</h5>
                         <h2>{{ citasProgramadas.length }}</h2>
@@ -94,7 +153,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card text-white bg-secondary mb-3">
+                <div class="card text-white bg-completadas mb-3">
                     <div class="card-body text-center">
                         <h5 class="card-title">Completadas</h5>
                         <h2>{{ citasCompletadas.length }}</h2>

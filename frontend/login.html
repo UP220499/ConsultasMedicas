@@ -26,6 +26,8 @@
 
         .auth-card .card-header {
             border-radius: 18px 18px 0 0;
+            background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+            color: #fff;
         }
 
         .input-group-text {
@@ -34,7 +36,7 @@
         }
 
         .form-control:focus {
-            box-shadow: 0 0 0 2px #764ba2;
+            box-shadow: 0 0 0 2px #00bcd4;
         }
 
         .btn-lg {
@@ -52,6 +54,44 @@
         .auth-tabs .nav-link {
             font-weight: 500;
             font-size: 1.1em;
+            color: #1976d2;
+        }
+
+        .auth-tabs .nav-link.active {
+            background: linear-gradient(90deg, #1a237e 0%, #00bcd4 100%);
+            color: #fff !important;
+        }
+
+        .btn-primary,
+        .btn-success {
+            background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+            border: none;
+        }
+
+        .btn-primary:hover,
+        .btn-success:hover {
+            background: #1a237e;
+            color: #fff;
+        }
+
+        .btn-outline-primary {
+            border-color: #00bcd4;
+            color: #00bcd4;
+        }
+
+        .btn-outline-primary:hover {
+            background: #00bcd4;
+            color: #fff;
+        }
+
+        .btn-outline-secondary {
+            border-color: #1976d2;
+            color: #1976d2;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #1976d2;
+            color: #fff;
         }
     </style>
 </head>
@@ -61,7 +101,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card auth-card">
-                    <div class="card-header bg-primary text-white text-center">
+                    <div class="card-header text-center">
                         <h3><i class="bi bi-heart-pulse-fill me-2"></i>Sistema de Consulta Médica</h3>
                         <p class="mb-0">Gestión integral de citas médicas</p>
                     </div>
@@ -69,14 +109,14 @@
                         <!-- TABS DE NAVEGACIÓN -->
                         <ul class="nav nav-pills nav-justified mb-4 auth-tabs" id="authTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="login-tab" data-bs-toggle="pill" 
-                                        data-bs-target="#login-panel" type="button" role="tab">
+                                <button class="nav-link active" id="login-tab" data-bs-toggle="pill"
+                                    data-bs-target="#login-panel" type="button" role="tab">
                                     <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="register-tab" data-bs-toggle="pill" 
-                                        data-bs-target="#register-panel" type="button" role="tab">
+                                <button class="nav-link" id="register-tab" data-bs-toggle="pill"
+                                    data-bs-target="#register-panel" type="button" role="tab">
                                     <i class="bi bi-person-plus me-1"></i>Registrarse
                                 </button>
                             </li>
@@ -91,7 +131,7 @@
                                         <label class="form-label">Email *</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                            <input type="email" class="form-control" id="login-email" 
+                                            <input type="email" class="form-control" id="login-email"
                                                 placeholder="usuario@example.com" required autocomplete="username">
                                         </div>
                                     </div>
@@ -99,13 +139,14 @@
                                         <label class="form-label">Contraseña *</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                            <input type="password" class="form-control" id="login-password" 
+                                            <input type="password" class="form-control" id="login-password"
                                                 placeholder="Ingresa tu contraseña" required autocomplete="current-password">
                                         </div>
                                     </div>
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary btn-lg" id="login-btn">
-                                            <span id="login-spinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
+                                            <span id="login-spinner" class="spinner-border spinner-border-sm me-2"
+                                                style="display: none;"></span>
                                             Iniciar Sesión
                                         </button>
                                     </div>
@@ -120,8 +161,8 @@
                                                     <small><strong>Admin</strong><br>
                                                     admin@mediconsultas.com<br>
                                                     admin123</small>
-                                                    <button class="btn btn-outline-warning btn-sm mt-1 w-100" 
-                                                            onclick="fillAdminCredentials()">Usar</button>
+                                                    <button class="btn btn-outline-warning btn-sm mt-1 w-100"
+                                                        onclick="fillAdminCredentials()">Usar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -131,8 +172,8 @@
                                                     <small><strong>Paciente</strong><br>
                                                     maria@example.com<br>
                                                     123456</small>
-                                                    <button class="btn btn-outline-success btn-sm mt-1 w-100" 
-                                                            onclick="fillPatientCredentials()">Usar</button>
+                                                    <button class="btn btn-outline-success btn-sm mt-1 w-100"
+                                                        onclick="fillPatientCredentials()">Usar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -149,7 +190,7 @@
                                             <label class="form-label">Nombre Completo *</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                                <input type="text" class="form-control" id="register-nombre" 
+                                                <input type="text" class="form-control" id="register-nombre"
                                                     placeholder="Juan Pérez" required autocomplete="name">
                                             </div>
                                         </div>
@@ -157,7 +198,7 @@
                                             <label class="form-label">Email *</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                                <input type="email" class="form-control" id="register-email" 
+                                                <input type="email" class="form-control" id="register-email"
                                                     placeholder="usuario@example.com" required autocomplete="email">
                                             </div>
                                         </div>
@@ -165,7 +206,7 @@
                                             <label class="form-label">Contraseña *</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                                <input type="password" class="form-control" id="register-password" 
+                                                <input type="password" class="form-control" id="register-password"
                                                     placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
                                             </div>
                                         </div>
@@ -173,7 +214,7 @@
                                             <label class="form-label">Teléfono</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                                <input type="tel" class="form-control" id="register-telefono" 
+                                                <input type="tel" class="form-control" id="register-telefono"
                                                     placeholder="+52 55 1234 5678" autocomplete="tel">
                                             </div>
                                         </div>
@@ -181,13 +222,15 @@
                                             <label class="form-label">Tipo de Usuario *</label>
                                             <select class="form-select" id="register-tipo" required>
                                                 <option value="PACIENTE">Paciente - Solicitar citas médicas</option>
-                                                <option value="ADMIN">Administrador - Gestionar sistema (requiere autorización)</option>
+                                                <option value="ADMIN">Administrador - Gestionar sistema (requiere autorización)
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-success btn-lg" id="register-btn">
-                                            <span id="register-spinner" class="spinner-border spinner-border-sm me-2" style="display: none;"></span>
+                                            <span id="register-spinner" class="spinner-border spinner-border-sm me-2"
+                                                style="display: none;"></span>
                                             Registrarse
                                         </button>
                                     </div>
