@@ -257,7 +257,7 @@
                             <label class="form-label">Fecha y Hora Preferida *</label>
                             <input type="datetime-local" class="form-control" ng-model="nuevaCita.fechaHora" 
                                    required name="fechaHora" ng-min="fechaMinima">
-                            <small class="text-muted">Selecciona una fecha futura (mínimo 1 hora desde ahora)</small>
+                            <small class="text-muted">Selecciona una fecha y hora igual o posterior a la actual.</small>
                         </div>
 
                         <!-- MOTIVO -->
@@ -289,6 +289,17 @@
                                 <span ng-hide="cargando">Solicitar Cita</span>
                                 <span ng-show="cargando">Enviando...</span>
                             </button>
+                            <div ng-if="!cargando && citaForm.$invalid" class="mt-2">
+                                <div class="alert alert-danger p-2 mb-0" style="font-size:0.95em">
+                                    <div ng-if="citaForm.medico.$invalid">Debes seleccionar un médico.</div>
+                                    <div ng-if="citaForm.fechaHora.$invalid">Debes seleccionar una fecha y hora válida (mínimo 1 hora desde ahora y no después de hoy).</div>
+                                    <!-- Mensaje de error personalizado para fecha/hora -->
+                                    <!-- Mensaje de error personalizado para fecha/hora -->
+                                    <div ng-if="citaForm.fechaHora.$invalid">Debes seleccionar una fecha y hora válida (no en el pasado).</div>
+                                    <div ng-if="citaForm.motivo.$invalid">El motivo debe tener al menos 10 caracteres.</div>
+                                    <div ng-if="citaForm.telefono.$invalid">El teléfono debe tener entre 10 y 15 dígitos (opcional).</div>
+                                </div>
+                            </div>
                             <button type="button" class="btn btn-secondary me-2" ng-click="cancelarFormulario()">
                                 Cancelar
                             </button>
@@ -392,13 +403,14 @@
                 $scope.cargandoCitas = false;
                 $scope.datosCitaPrevia = null;
                 $scope.fechaMinima = '';
+                $scope.fechaMaxima = '';
                 $scope.medicoPreseleccionado = false;
                 
                 const API_BASE = 'http://localhost:8080/api';
                 
-                // Configurar fecha mínima (1 hora desde ahora)
+                // Configurar fecha mínima (ahora, sin exigir 1 hora de anticipación, sin máximo)
                 const ahora = new Date();
-                ahora.setHours(ahora.getHours() + 1);
+                ahora.setSeconds(0,0);
                 $scope.fechaMinima = ahora.toISOString().slice(0, 16);
                 
                 // Verificar sesión de paciente
@@ -581,43 +593,35 @@
                         alert('Debes seleccionar un médico');
                         return;
                     }
-                    
                     if (!$scope.nuevaCita.fechaHora) {
                         alert('Debes seleccionar una fecha y hora');
                         return;
                     }
-                    
-                    // Validar que la fecha sea futura
+                    // Validar que la fecha sea igual o posterior a la hora actual (sin máximo)
                     const fechaSeleccionada = new Date($scope.nuevaCita.fechaHora);
-                    const fechaMinima = new Date();
-                    fechaMinima.setHours(fechaMinima.getHours() + 1);
-                    
-                    if (fechaSeleccionada <= fechaMinima) {
-                        alert('La fecha debe ser al menos 1 hora desde ahora');
+                    const ahora = new Date();
+                    ahora.setSeconds(0,0);
+                    if (fechaSeleccionada < ahora) {
+                        alert('La fecha y hora deben ser igual o posterior a la actual.');
                         return;
                     }
-                    
                     // Validar día de la semana (no domingos)
                     if (fechaSeleccionada.getDay() === 0) {
                         if (!confirm('Has seleccionado un domingo. ¿Estás seguro de que quieres continuar?')) {
                             return;
                         }
                     }
-                    
                     // Validar horario (8 AM - 8 PM)
                     const hora = fechaSeleccionada.getHours();
                     if (hora < 8 || hora > 20) {
                         alert('Por favor selecciona un horario entre 8:00 AM y 8:00 PM');
                         return;
                     }
-                    
                     if (!$scope.nuevaCita.motivo || $scope.nuevaCita.motivo.trim().length < 10) {
                         alert('El motivo debe tener al menos 10 caracteres');
                         return;
                     }
-                    
                     $scope.cargando = true;
-                    
                     const citaData = {
                         paciente: $scope.nuevaCita.paciente.trim(),
                         email: $scope.nuevaCita.email.trim(),
@@ -627,7 +631,6 @@
                         motivo: $scope.nuevaCita.motivo.trim(),
                         estado: 'PROGRAMADA'
                     };
-                    
                     $http.post(API_BASE + '/citas', citaData)
                         .then(function(response) {
                             alert('¡Cita solicitada correctamente!\n\n' +
@@ -635,10 +638,8 @@
                                   '• Médico: ' + $scope.nuevaCita.medico.nombre + '\n' +
                                   '• Fecha: ' + $scope.formatearFecha($scope.nuevaCita.fechaHora) + '\n' +
                                   '• Te contactaremos pronto para confirmar');
-                            
                             $scope.cancelarFormulario();
                             $scope.cargarMisCitas();
-                            
                             // Actualizar información del usuario si cambió el teléfono
                             if ($scope.nuevaCita.telefono && $scope.nuevaCita.telefono !== $scope.pacienteInfo.telefono) {
                                 $scope.pacienteInfo.telefono = $scope.nuevaCita.telefono;
@@ -654,6 +655,8 @@
                                 errorMsg += ' Verifica que todos los datos sean correctos.';
                             } else if (error.status === 404) {
                                 errorMsg += ' El médico seleccionado no está disponible.';
+                            } else if (error.status === 409) {
+                                errorMsg += ' Ya existe una cita programada para ese paciente o médico en esa fecha y hora.';
                             } else {
                                 errorMsg += ' Intenta nuevamente más tarde.';
                             }
