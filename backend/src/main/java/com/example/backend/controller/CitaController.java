@@ -70,6 +70,12 @@ public class CitaController {
         if (cita.getMedico() != null && cita.getMedico().getId() != null) {
             Optional<Medico> medico = medicoRepository.findById(cita.getMedico().getId());
             if (medico.isPresent()) {
+                // Validar que no exista otra cita con el mismo médico y fecha/hora
+                List<Cita> citasExistentes = citaRepository.findByMedico(medico.get());
+                boolean existeConflicto = citasExistentes.stream().anyMatch(c -> c.getFechaHora().equals(cita.getFechaHora()));
+                if (existeConflicto) {
+                    return ResponseEntity.status(409).body(null); // 409 Conflict
+                }
                 cita.setMedico(medico.get());
                 Cita savedCita = citaRepository.save(cita);
                 return ResponseEntity.ok(savedCita);
@@ -84,18 +90,28 @@ public class CitaController {
         Optional<Cita> optionalCita = citaRepository.findById(id);
         if (optionalCita.isPresent()) {
             Cita cita = optionalCita.get();
+            // Validar que no exista otra cita con el mismo médico y fecha/hora (excluyendo la actual)
+            Medico medicoToCheck = citaDetails.getMedico() != null && citaDetails.getMedico().getId() != null
+                    ? medicoRepository.findById(citaDetails.getMedico().getId()).orElse(null)
+                    : cita.getMedico();
+            if (medicoToCheck != null) {
+                List<Cita> citasExistentes = citaRepository.findByMedico(medicoToCheck);
+                boolean existeConflicto = citasExistentes.stream()
+                        .anyMatch(c -> !c.getId().equals(id) && c.getFechaHora().equals(citaDetails.getFechaHora()));
+                if (existeConflicto) {
+                    return ResponseEntity.status(409).body(null); // 409 Conflict
+                }
+            }
             cita.setPaciente(citaDetails.getPaciente());
             cita.setEmail(citaDetails.getEmail());
             cita.setTelefono(citaDetails.getTelefono());
             cita.setFechaHora(citaDetails.getFechaHora());
             cita.setMotivo(citaDetails.getMotivo());
             cita.setEstado(citaDetails.getEstado());
-            
             if (citaDetails.getMedico() != null && citaDetails.getMedico().getId() != null) {
                 Optional<Medico> medico = medicoRepository.findById(citaDetails.getMedico().getId());
                 medico.ifPresent(cita::setMedico);
             }
-            
             return ResponseEntity.ok(citaRepository.save(cita));
         }
         return ResponseEntity.notFound().build();
